@@ -73,7 +73,8 @@ import matplotlib.pyplot as plt
 
 # Provided functions:
 
-def make_eqrec_projection(image='anarres1.png', azikind='stereographic',
+def make_eqrec_projection(image='templates/stereographic.png',
+                          azikind='stereographic',
                           latlong=(512, 512), cutoff=(0, 0)):
     """
     This function takes loads an image containing an azimuthal
@@ -175,7 +176,8 @@ def get_eqrec_coordinate_transform(Lat, Long, R, co, azikind='stereographic'):
     return X, Z
 
 
-def get_eqrec_map(east='anarres1.png', west='anarres2b.png',
+def get_eqrec_map(east='templates/stereographic.png',
+                  west='templates/stereographic.png',
                   azikind='stereographic', latlong=(720, 720), cutoff=(7, 1)):
     """
     This is a convenience function for creating a full equirectangular
@@ -209,7 +211,8 @@ def draw_eqrec_map(the_map, dimensions=(-180, 180, -90, 90), origin='upper'):
     plt.yticks(np.arange(dimensions[2], dimensions[3] + 1, 30))
 
 
-def make_azi_projection(image, both_hemispheres=True, R=256,
+def make_azi_projection(image='templates/grid_double.png',
+                        both_hemispheres=True, R=256,
                         azikind='stereographic', padwith=0):
     """
     This is a wrapper function for really_make_azi_projection, to make
@@ -338,13 +341,13 @@ def get_azi_coordinate_transform(X, Y, Z, S, azikind='stereographic'):
     return Lat, Long
 
 
-def get_azi_map(the_map='anarresproj.png', padding=10, padwith=0, R=256,
-                azikind='stereographic'):
+def get_azi_map(the_map='templates/grid_double.png', padding=10, padwith=0,
+                R=256, azikind='stereographic'):
     """
     This is a convenience function for creating a composite map of both
-    hemispheres with azimythal projection from a single hemisphere image,
-    as described in *make_azi_projection. The default azimuthal projection
-    is stereographic, with orthoographic and equidistant as alternatives.
+    hemispheres with azimuthal projection from a single image, as described in
+    *make_azi_projection. The default azimuthal projection is stereographic,
+    with orthoographic and equidistant as alternatives.
 
     Padding is added around the azimutahl hemispheres with the amount
     requested. The colour of the padding is black (padwith=0) by default, but
@@ -386,7 +389,8 @@ def draw_azi_map(the_map, origin='upper'):
     plt.axis('off')
 
 
-def test_projection(the_image='anarres1.png', azikind='stereographic',
+def test_projection(the_image='templates/stereographic.png',
+                    azikind='stereographic',
                     latlong=(512, 512), cutoff=(0, 0), origin='upper'):
     """
     This is a function for testing the efficacy of the forward and reverse
