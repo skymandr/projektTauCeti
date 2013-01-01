@@ -445,7 +445,7 @@ def get_rectangular_grid(spacing=30, size=720, both=False):
     grid[M, :] = 0
     grid[:, P] = 0
 
-    return grid, M, P
+    return grid
 
 
 class OptionError(Exception):
