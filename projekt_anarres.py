@@ -45,8 +45,8 @@ also handle Lambert equal are, equidistant and stereographic azimuthal
 projections. Those were a little tricker implementing, but seem to yield much
 better results for all the Hainish maps (as well as actually being sensible
 choices). The default projection is equidistant, but the qualitative
-difference between the three is very slight. (See make_test_grids for
-comparisons!)
+difference between the three is very slight. (See contents of the directory
+'testgrids' for comparisons!)
 
 The equirectangular projection is, perhaps, even less inspired [9], but this is
 a standard often used by e.g. NASA in planetary survey maps [10]. It is the
@@ -67,11 +67,6 @@ the same length.
 [9]:  http://xkcd.com/977/
 [10]: http://www.mapaplanet.org/
 """
-
-## TODO:
-# update docstrings
-# update defauls
-# update main doc
 
 
 # Initial imports:
@@ -184,7 +179,7 @@ def get_eqrec_coordinate_transform(Lat, Long, R, co, azikind='stereographic'):
 
         rho = np.sqrt(2) * np.cos(d / 2)
         the = f
-        
+
         X = (np.round((Rx - 1 - cox) * rho * np.cos(the) \
             + Rx)).astype(np.int)
         Z = (np.round((Rz - 1 - coz) * rho * np.sin(the) \
