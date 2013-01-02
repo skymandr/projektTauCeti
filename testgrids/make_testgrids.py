@@ -75,7 +75,7 @@ def get_eqrec_coordinate_transform(Lat, Lon, R=1.0, azikind='equidistant'):
 
         X = R * rho * np.cos(the)
         Z = R * rho * np.sin(the)
-    elif axikind.lower() == "lambert":
+    elif azikind.lower() == "lambert":
         x = -np.sin(Lon.T) * np.cos(Lat.T)
         z = -np.cos(Lon.T)
         y = np.sin(Lon.T) * np.sin(Lat.T)
