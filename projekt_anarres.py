@@ -3,7 +3,7 @@
     - a python module for converting between azimuthal and
     equirectangular map projections
 
-    (C) 2012 Andreas Skyman (skymandr@gmail.com)
+    (C) 2012 Andreas Skyman (skymandr@fripost.org)
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
     along with this program.  If not, see [0].
 
 
-This module contains functions for converting between orthographi, equidistant
+This module contains functions for converting between orthographic, equidistant
 and stereographic azimuthal [1, 2, 3], and equirectangular cylindrical [4] map
 projections. While these two are arguably some of the cruder projections
 available, they were chosen because they both make some sort of sense:
@@ -137,10 +137,10 @@ def get_eqrec_coordinate_transform(Lat, Long, R, co, azikind='stereographic'):
     if azikind.lower() == 'orthographic':
         X = (-np.round(np.sin(Long.T) * np.cos(Lat.T) \
                         * (Rx - 1 - cox)) + Rx).astype(np.int)
-        Z = (-np.round(np.cos(Lat) * (Rz - 1 - coz)) + Rz).astype(np.int)
+        Z = (-np.round(np.cos(Long.T) * (Rz - 1 - coz)) + Rz).astype(np.int)
     elif azikind.lower() == 'equidistant':
         x = -np.sin(Long.T) * np.cos(Lat.T)
-        z = -np.cos(Lat)
+        z = -np.cos(Long.T)
         y = np.sin(Long.T) * np.sin(Lat.T)
 
         d = np.arccos(y / 1)
@@ -152,7 +152,7 @@ def get_eqrec_coordinate_transform(Lat, Long, R, co, azikind='stereographic'):
             / np.pi + Rz)).astype(np.int)
     elif azikind.lower() == 'stereographic':
         x = -np.sin(Long.T) * np.cos(Lat.T)
-        z = -np.cos(Lat)
+        z = -np.cos(Long.T
         y = np.sin(Long.T) * np.sin(Lat.T)
 
         d = np.pi - np.arccos(y / 1)
