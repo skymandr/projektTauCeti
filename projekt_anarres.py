@@ -19,14 +19,15 @@
     along with this program.  If not, see [0].
 
 
-This module contains functions for converting between orthographic, equidistant
-and stereographic azimuthal [1, 2, 3], and equirectangular cylindrical [4] map
-projections. While these two are arguably some of the cruder projections
-available, they were chosen because they both make some sort of sense:
+This module contains functions for converting between orthographic, Lambert
+equal area, equidistant and stereoraphic azimuthal [1, 2, 3, 4], and
+equirectangular cylindrical [5] map projections. While these two are arguably
+some of the cruder projections available, they were chosen because they both
+make some sort of sense:
 
 The orthographic projection is the simplest imaginable. At first, this appeared
 to me to be the projection of choice in the "Hainish cycle" science fiction
-works of Ursula K. Le Guin [5, 6], my interpetation of which was that this was
+works of Ursula K. Le Guin [6, 7], my interpetation of which was that this was
 the standard for the space faring Ekumen: it made sense -- I argued -- since it
 is the projection of the hemisphere onto the closest point on a a plane
 bisecting the planet, corresponding to a view of the planet from very far away
@@ -35,34 +36,42 @@ thought, however, this projection makes little sense, because it discards so my
 detail near the edge of the circle -- it would require a very special geography
 of a planet for this to be a useful projection. The final desicion to move from
 this kind of projection came when looking at maps, drawn by the author, of the
-planet Gethen [7], where the polar regions were marked in such a way as to
+planet Gethen [8], where the polar regions were marked in such a way as to
 indicate unambiguously, that the projection was not orthographic, but some more
 advance azimuthal projection.
 
 As an alternative to the orthographic projection, therefore, the module can
-also handle equidistant and stereographic azimuthal projections. Those were a
-little tricker implementing, but seem to yield much better results for all the
-Hainish maps. The default projection is stereographic, but the qualitative
-difference between the two is very slight.
+also handle Lambert equal are, equidistant and stereographic azimuthal
+projections. Those were a little tricker implementing, but seem to yield much
+better results for all the Hainish maps (as well as actually being sensible
+choices). The default projection is equidistant, but the qualitative
+difference between the three is very slight. (See make_test_grids for
+comparisons!)
 
-The equirectangular projection is, perhaps, even less inspired [7], but this is
-a standard often used by e.g. NASA in planetary survey maps [8]. It is the
+The equirectangular projection is, perhaps, even less inspired [9], but this is
+a standard often used by e.g. NASA in planetary survey maps [10]. It is the
 simplest imaginable cylindrical projection, where all degrees are of draw with
 the same length.
 
 
 ------
-[0]: http://www.gnu.org/licenses/gpl-3.0.html
-[1]: http://en.wikipedia.org/wiki/Orthographic_projection_(cartography)
-[2]: http://en.wikipedia.org/wiki/Azimuthal_equidistant_projection
-[3]: http://en.wikipedia.org/wiki/Stereographic_projection
-[4]: http://en.wikipedia.org/wiki/Equirectangular_projection
-[5]: http://www.ursulakleguin.com/FAQ.html#EkumenBooks
-[6]: http://www.ursulakleguin.com/MenuContentsList.html#Illustrations
-[7]: http://www.ursulakleguin.com/Maps/Map-Gethen.html
-[8]: http://xkcd.com/977/
-[9]: http://www.mapaplanet.org/
+[0]:  http://www.gnu.org/licenses/gpl-3.0.html
+[1]:  http://en.wikipedia.org/wiki/Orthographic_projection_(cartography)
+[2]:  http://en.wikipedia.org/wiki/Azimuthal_equidistant_projection
+[3]:  http://en.wikipedia.org/wiki/Lambert_azimuthal_equal-area_projection
+[4]:  http://en.wikipedia.org/wiki/Stereographic_projection
+[5]:  http://en.wikipedia.org/wiki/Equirectangular_projection
+[6]:  http://www.ursulakleguin.com/FAQ.html#EkumenBooks
+[7]:  http://www.ursulakleguin.com/MenuContentsList.html#Illustrations
+[8]:  http://www.ursulakleguin.com/Maps/Map-Gethen.html
+[9]:  http://xkcd.com/977/
+[10]: http://www.mapaplanet.org/
 """
+
+## TODO:
+# update docstrings
+# update defauls
+# update main doc
 
 
 # Initial imports:
@@ -86,8 +95,8 @@ def make_eqrec_projection(image='templates/stereographic.png',
     around it to be small. The padding can be adjusted for by calling it with
     non-zero cutoff (unit is in pixels).
 
-    The azimimuthal projection can be of either the "orthographic",
-    "stereographic", or "equidistant" kind, as specified by the azikind
+    The azimimuthal projection can be of either orthographic, lambert,
+    equidistant (default) or stereographic kind, as specified by the azikind
     parameter.
 
     If the image is not in grey scale, it is flattend first.
@@ -128,7 +137,7 @@ def get_eqrec_coordinate_transform(Lat, Long, R, co, azikind='stereographic'):
     """
     Convenience function calculating the coordinate transform from
     azimuthal to equirectangular projection, where the azimuthal projection
-    is either orthographic, stereographic (default), or equidistant.
+    is either orthographic, lambert, equidistant (default) or stereographic.
     """
 
     Rx, Rz = R[0], R[1]
@@ -161,6 +170,21 @@ def get_eqrec_coordinate_transform(Lat, Long, R, co, azikind='stereographic'):
         rho = np.sin(d) / (1 - np.cos(d))
         the = f
 
+        X = (np.round((Rx - 1 - cox) * rho * np.cos(the) \
+            + Rx)).astype(np.int)
+        Z = (np.round((Rz - 1 - coz) * rho * np.sin(the) \
+            + Rz)).astype(np.int)
+    elif azikind.lower() == 'lambert':
+        x = -np.sin(Long.T) * np.cos(Lat.T)
+        z = -np.cos(Long.T)
+        y = np.sin(Long.T) * np.sin(Lat.T)
+
+        d = np.pi - np.arccos(y / 1)
+        f = np.angle(x + 1j * z)
+
+        rho = np.sqrt(2) * np.cos(d / 2)
+        the = f
+        
         X = (np.round((Rx - 1 - cox) * rho * np.cos(the) \
             + Rx)).astype(np.int)
         Z = (np.round((Rz - 1 - coz) * rho * np.sin(the) \
@@ -222,8 +246,8 @@ def make_azi_projection(image='templates/grid_double.png',
     The function loads a specified image and flattens it if it is not in
     grey scale already. It then calls recall_make_azi_projection the
     appropriate number of times to perform the azimuthal projection. The
-    azimuthal porjection can be of either the orthographic, the sterographic
-    (default) or the equidistant kind.
+    azimuthal porjection can be of is either orthographic, lambert,
+    equidistant (default) or stereographic kind.
 
     The parameter padwith decides the hue of the area outside the map.
     It should be between 0 (black) and 1 (white).
@@ -259,9 +283,9 @@ def really_make_azi_projection(hemisphere, R=256,
     equirectangular projection, transforms this into an azimuthal
     projection. The resulting array has the shape (2*R+1, 2*R+1).
 
-    Can handle both orthographic, stereographic (default), and
-    equirectangular azimuthal projections, as specified by the
-    parameter azikind.
+    Can handle both orthographic, lambert, equidistant (default) and
+    stereographic azimuthal projections, as specified by the parameter
+    azikind.
 
     The parameter padwith decides the hue of the area outside the map.
     It should be between 0 (black) and 1 (white).
@@ -295,7 +319,7 @@ def get_azi_coordinate_transform(X, Y, Z, S, azikind='stereographic'):
     """
     Convenience function calculating the coordinate transform from
     equirectangular to azimuthal projection, where the azimuthal projection
-    is either orthographic, stereographic (default), or equidistant.
+    is either orthographic, lambert, equidistant (default) or stereographic.
     """
 
     if azikind.lower() == 'orthographic':
@@ -331,6 +355,20 @@ def get_azi_coordinate_transform(X, Y, Z, S, azikind='stereographic'):
         Long = (np.round((np.arctan(x / y) % np.pi) * \
                          (S - 1) / np.pi))\
                          .astype(np.int)
+    elif azikind.lower() == 'lambert':
+        d = 2 * np.arccos(np.sqrt(X ** 2 + Z ** 2) / np.sqrt(2))
+        f = np.angle(X + 1j * Z)
+
+        x = np.cos(d)
+        y = np.sin(d) * np.cos(f)
+        z = np.sin(d) * np.sin(f)
+
+        Lat  = (np.round(np.arccos(z / 1) * \
+                         (S - 1) / np.pi))\
+                         .astype(np.int)
+        Long = (np.round((np.arctan(x / y) % np.pi) * \
+                         (S - 1) / np.pi))\
+                         .astype(np.int)
     else:
         try:
             raise OptionError(azikind)
@@ -346,8 +384,8 @@ def get_azi_map(the_map='templates/grid_double.png', padding=10, padwith=0,
     """
     This is a convenience function for creating a composite map of both
     hemispheres with azimuthal projection from a single image, as described in
-    *make_azi_projection. The default azimuthal projection is stereographic,
-    with orthoographic and equidistant as alternatives.
+    *make_azi_projection. The default azimuthal projection is equidistant,
+    with orthoographic, lambert and stereographic as alternatives.
 
     Padding is added around the azimutahl hemispheres with the amount
     requested. The colour of the padding is black (padwith=0) by default, but
