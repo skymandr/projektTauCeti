@@ -129,7 +129,7 @@ def get_azi_coordinate_transform(X, Z, S, azikind='equidistant'):
         y = np.sin(d) * np.cos(f)
         z = np.sin(d) * np.sin(f)
 
-        Lat  np.arccos(z / 1) * S / np.pi
+        Lat = np.arccos(z / 1) * S / np.pi
         Lon = np.arctan(x / y) % np.pi * S / np.pi
     elif azikind.lower() == 'lambert':
         d = 2 * np.arccos(np.sqrt(X ** 2 + Z ** 2) / np.sqrt(2))
@@ -139,7 +139,7 @@ def get_azi_coordinate_transform(X, Z, S, azikind='equidistant'):
         y = np.sin(d) * np.cos(f)
         z = np.sin(d) * np.sin(f)
 
-        Lat  np.arccos(z / 1) * S / np.pi
+        Lat = np.arccos(z / 1) * S / np.pi
         Lon = np.arctan(x / y) % np.pi * S / np.pi
     else:
         try:
