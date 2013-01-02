@@ -167,7 +167,7 @@ def make_test(graticule=15, resolution=1, fign=1, clearit=True,
     Lat2, Lon2 = np.mgrid[0: 181: graticule, 0: 181: resolution] * np.pi / 180
 
     N = len(projections)
-    mc = 1 - 1e-6
+    mc = 1 - 1e-9
 
     for s, src in enumerate(projections):
         x1, z1 = get_eqrec_coordinate_transform(Lat1, Lon1, 1.0, src)
