@@ -152,7 +152,7 @@ def get_eqrec_coordinate_transform(Lat, Long, R, co, azikind='stereographic'):
             / np.pi + Rz)).astype(np.int)
     elif azikind.lower() == 'stereographic':
         x = -np.sin(Long.T) * np.cos(Lat.T)
-        z = -np.cos(Long.T
+        z = -np.cos(Long.T)
         y = np.sin(Long.T) * np.sin(Lat.T)
 
         d = np.pi - np.arccos(y / 1)
@@ -391,7 +391,7 @@ def draw_azi_map(the_map, origin='upper'):
 
 def test_projection(the_image='templates/stereographic.png',
                     azikind='stereographic',
-                    latlong=(512, 512), cutoff=(0, 0), origin='upper'):
+                    latlong=(512, 512), cutoff=(-1, -1), origin='upper'):
     """
     This is a function for testing the efficacy of the forward and reverse
     transforms.
