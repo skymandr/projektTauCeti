@@ -20,7 +20,7 @@
 
 
 This module contains functions for converting between orthographic, Lambert
-equal area, equidistant and stereoraphic azimuthal [1, 2, 3, 4], and
+equal-area, equidistant and stereoraphic azimuthal [1, 2, 3, 4], and
 equirectangular cylindrical [5] map projections. While these two are arguably
 some of the cruder projections available, they were chosen because they both
 make some sort of sense:
@@ -41,7 +41,7 @@ indicate unambiguously, that the projection was not orthographic, but some more
 advance azimuthal projection.
 
 As an alternative to the orthographic projection, therefore, the module can
-also handle Lambert equal are, equidistant and stereographic azimuthal
+also handle Lambert equal-area, equidistant and stereographic azimuthal
 projections. Those were a little tricker implementing, but seem to yield much
 better results for all the Hainish maps (as well as actually being sensible
 choices). The default projection is equidistant, but the qualitative
@@ -77,8 +77,8 @@ import matplotlib.pyplot as plt
 
 # Provided functions:
 
-def make_eqrec_projection(image='templates/stereographic.png',
-                          azikind='stereographic',
+def make_eqrec_projection(image='templates/equidistant.png',
+                          azikind='equidistant',
                           latlong=(512, 512), cutoff=(0, 0)):
     """
     This function takes loads an image containing an azimuthal
@@ -128,7 +128,7 @@ def make_eqrec_projection(image='templates/stereographic.png',
     return the_image, new_image
 
 
-def get_eqrec_coordinate_transform(Lat, Long, R, co, azikind='stereographic'):
+def get_eqrec_coordinate_transform(Lat, Long, R, co, azikind='equidistant'):
     """
     Convenience function calculating the coordinate transform from
     azimuthal to equirectangular projection, where the azimuthal projection
@@ -195,9 +195,9 @@ def get_eqrec_coordinate_transform(Lat, Long, R, co, azikind='stereographic'):
     return X, Z
 
 
-def get_eqrec_map(east='templates/stereographic.png',
-                  west='templates/stereographic.png',
-                  azikind='stereographic', latlong=(720, 720), cutoff=(7, 1)):
+def get_eqrec_map(east='templates/equidistant.png',
+                  west='templates/equidistant.png',
+                  azikind='equidistant', latlong=(720, 720), cutoff=(7, 1)):
     """
     This is a convenience function for creating a full equirectangular
     map from two hemisphere images, as described in make_eqrec_projection.
@@ -232,7 +232,7 @@ def draw_eqrec_map(the_map, dimensions=(-180, 180, -90, 90), origin='upper'):
 
 def make_azi_projection(image='templates/grid_double.png',
                         both_hemispheres=True, R=256,
-                        azikind='stereographic', padwith=0):
+                        azikind='equidistant', padwith=0):
     """
     This is a wrapper function for really_make_azi_projection, to make
     it simpler to automatically make two hemispheres in one go from a single
@@ -272,7 +272,7 @@ def make_azi_projection(image='templates/grid_double.png',
 
 
 def really_make_azi_projection(hemisphere, R=256,
-                               azikind='stereographic', padwith=0):
+                               azikind='equidistant', padwith=0):
     """
     From supplied image data, assumed to be one hemisphere of an
     equirectangular projection, transforms this into an azimuthal
@@ -310,7 +310,7 @@ def really_make_azi_projection(hemisphere, R=256,
     return hemisphere, azimuthal
 
 
-def get_azi_coordinate_transform(X, Y, Z, S, azikind='stereographic'):
+def get_azi_coordinate_transform(X, Y, Z, S, azikind='equidistant'):
     """
     Convenience function calculating the coordinate transform from
     equirectangular to azimuthal projection, where the azimuthal projection
@@ -375,7 +375,7 @@ def get_azi_coordinate_transform(X, Y, Z, S, azikind='stereographic'):
 
 
 def get_azi_map(the_map='templates/grid_double.png', padding=10, padwith=0,
-                R=256, azikind='stereographic'):
+                R=256, azikind='equidistant'):
     """
     This is a convenience function for creating a composite map of both
     hemispheres with azimuthal projection from a single image, as described in
@@ -422,8 +422,8 @@ def draw_azi_map(the_map, origin='upper'):
     plt.axis('off')
 
 
-def test_projection(the_image='templates/stereographic.png',
-                    azikind='stereographic',
+def test_projection(the_image='templates/equidistant.png',
+                    azikind='equidistant',
                     latlong=(512, 512), cutoff=(-1, -1), origin='upper'):
     """
     This is a function for testing the efficacy of the forward and reverse

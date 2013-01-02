@@ -19,9 +19,10 @@
     along with this program.  If not, see [0].
 
 
-This module contains functions for converting between orthographic, equidistant
-and stereographic azimuthal [1, 2, 3], and equirectangular cylindrical [4] map
-projections, with the aim of showing the difference between them.
+This module contains functions for converting between orthographic, Lambert
+equal-area, equidistant and stereographic azimuthal [1, 2, 3, 4], and
+equirectangular cylindrical [5] map projections, with the aim of showing the
+difference between them.
 
 Please see projekt_anarres.py for more detailed information!
 
@@ -29,9 +30,10 @@ Please see projekt_anarres.py for more detailed information!
 ------
 [0]: http://www.gnu.org/licenses/gpl-3.0.html
 [1]: http://en.wikipedia.org/wiki/Orthographic_projection_(cartography)
-[2]: http://en.wikipedia.org/wiki/Azimuthal_equidistant_projection
-[3]: http://en.wikipedia.org/wiki/Stereographic_projection
-[4]: http://en.wikipedia.org/wiki/Equirectangular_projection
+[2]: http://en.wikipedia.org/wiki/Lambert_azimuthal_equal-area_projection
+[3]: http://en.wikipedia.org/wiki/Azimuthal_equidistant_projection
+[4]: http://en.wikipedia.org/wiki/Stereographic_projection
+[5]: http://en.wikipedia.org/wiki/Equirectangular_projection
 """
 
 import numpy as np
