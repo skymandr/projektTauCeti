@@ -36,17 +36,17 @@ Please see projekt_anarres.py for more detailed information!
 [5]: http://en.wikipedia.org/wiki/Equirectangular_projection
 """
 
+
 import numpy as np
 import matplotlib.pyplot as plt
 from  matplotlib import rc
-import projekt_anarres as p
 
 
-def get_eqrec_coordinate_transform(Lat, Lon, R=1.0, azikind='stereographic'):
+def get_eqrec_coordinate_transform(Lat, Lon, R=1.0, azikind='equidistant'):
     """
     Convenience function calculating the coordinate transform from
     azimuthal to equirectangular projection, where the azimuthal projection
-    is either orthographic, stereographic (default), or equidistant.
+    is either orthographic, lambert, equidistant (default), or stereographic.
     """
 
     if azikind.lower() == 'orthographic':
@@ -75,6 +75,19 @@ def get_eqrec_coordinate_transform(Lat, Lon, R=1.0, azikind='stereographic'):
 
         X = R * rho * np.cos(the)
         Z = R * rho * np.sin(the)
+    elif axikind.lower() == "lambert":
+        x = -np.sin(Lon.T) * np.cos(Lat.T)
+        z = -np.cos(Lon.T)
+        y = np.sin(Lon.T) * np.sin(Lat.T)
+
+        d = np.pi - np.arccos(y / 1)
+        f = np.angle(x + 1j * z)
+
+        rho = np.sqrt(2) * np.cos(d / 2)
+        the = f
+
+        X = R * rho * np.cos(the)
+        Z = R * rho * np.sin(the)
     else:
         try:
             raise OptionError(azikind)
@@ -85,11 +98,11 @@ def get_eqrec_coordinate_transform(Lat, Lon, R=1.0, azikind='stereographic'):
     return X, Z
 
 
-def get_azi_coordinate_transform(X, Z, S, azikind='stereographic'):
+def get_azi_coordinate_transform(X, Z, S, azikind='equidistant'):
     """
     Convenience function calculating the coordinate transform from
     equirectangular to azimuthal projection, where the azimuthal projection
-    is either orthographic, stereographic (default), or equidistant.
+    is either orthographic, lambert, equidistant (default), or stereographic.
     """
 
     Y = -np.sqrt(1.0 - X ** 2 - Z ** 2)
@@ -118,6 +131,16 @@ def get_azi_coordinate_transform(X, Z, S, azikind='stereographic'):
 
         Lat  np.arccos(z / 1) * S / np.pi
         Lon = np.arctan(x / y) % np.pi * S / np.pi
+    elif azikind.lower() == 'lambert':
+        d = 2 * np.arccos(np.sqrt(X ** 2 + Z ** 2) / np.sqrt(2))
+        f = np.angle(X + 1j * Z)
+
+        x = np.cos(d)
+        y = np.sin(d) * np.cos(f)
+        z = np.sin(d) * np.sin(f)
+
+        Lat  np.arccos(z / 1) * S / np.pi
+        Lon = np.arctan(x / y) % np.pi * S / np.pi
     else:
         try:
             raise OptionError(azikind)
@@ -129,7 +152,8 @@ def get_azi_coordinate_transform(X, Z, S, azikind='stereographic'):
 
 
 def make_test(graticule=15, resolution=1, fign=1, clearit=True,
-              projections=('orthographic', 'stereographic', 'equidistant')):
+              projections=('orthographic', 'lambert',
+                           'equidistant', 'stereographic')):
     """
     Function for producing a figure showcasing the differences between
     the selected projections.
@@ -199,32 +223,6 @@ def get_new_figure(fign):
     f = plt.figure(fign, figsize=(8, 5), dpi=150)
     f.subplots_adjust(left=0.15, bottom=0.15)
     return f
-
-
-def old_test_grids():
-    """
-    Function for making a comparison of the different projections in
-    bit map from. Reduntant.
-    """
-
-    things = ['orthographic', 'stereographic', 'equidistant']
-    for s, src in enumerate(things):
-        for d, dest in enumerate(things):
-            im, nim = p.make_eqrec_projection('tempaltes/{0}.png'.format(src),
-                                              azikind=dest, cutoff=(0, 0))
-            plt.imsave('testgrids/{0}_{1}'.format(src, dest), nim,
-                       cmap=cm.gray)
-            plt.subplot(3, 3, 3 * s + d + 1)
-            plt.imshow(nim, cmap=cm.gray)
-            if d == 0:
-                plt.ylabel("original:\n" + src)
-            if s == 0:
-                plt.title("assumption:\n" + dest, size='small')
-            ax = plt.gca()
-            ax.set_xticks([])
-            ax.set_yticks([])
-            ax.set_xticklabels([])
-            ax.set_yticklabels([])
 
 
 class OptionError(Exception):
