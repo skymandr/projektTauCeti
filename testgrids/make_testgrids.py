@@ -210,6 +210,41 @@ def make_test(graticule=15, resolution=1, fign=1, clearit=True,
                 plt.title("assumption:\n" + dest, size='medium')
 
 
+def make_azimuthal_showcase(graticule=15, resolution=1, fign=1, clearit=True,
+                            projections=('orthographic', 'lambert',
+                                         'equidistant', 'stereographic')):
+    """
+    Function for producing a figure showcasing the different azimuthal
+    projections.
+    """
+
+    fig = get_new_figure(fign)
+    if clearit:
+        fig.clf()
+
+    Lat1, Lon1 = np.mgrid[0: 181: resolution, 0: 181: graticule] * np.pi / 180
+    Lat2, Lon2 = np.mgrid[0: 181: graticule, 0: 181: resolution] * np.pi / 180
+
+    mc = 1 - 1e-9
+
+    for s, src in enumerate(projections):
+        x1, z1 = get_eqrec_coordinate_transform(Lat1, Lon1, 1.0, src)
+        x2, z2 = get_eqrec_coordinate_transform(Lat2, Lon2, 1.0, src)
+        plt.subplot(2, 2, s + 1)
+        plt.plot(x1.T, z1.T, 'r', label='Parallels')
+        plt.plot(x2, z2, 'k', label='Meridians')
+
+        ax = plt.gca()
+        ax.set_xticks([])
+        ax.set_yticks([])
+        ax.set_xticklabels([])
+        ax.set_yticklabels([])
+        plt.axis('equal')
+        plt.axis([-1.04, 1.04, -1.04, 1.04])
+        
+        plt.title(src)
+
+
 def get_new_figure(fign):
     rc('text', usetex=True)
     rc('font', family='serif')
