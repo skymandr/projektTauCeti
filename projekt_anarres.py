@@ -79,7 +79,7 @@ import matplotlib.pyplot as plt
 
 def make_eqrec_projection(image='templates/equidistant.png',
                           azikind='equidistant',
-                          latlong=(512, 512), cutoff=(0, 0)):
+                          latlong=(512, 512), cutoff=(-1, -1)):
     """
     This function takes loads an image containing an azimuthal
     projection of (one hemisphere of a) a planetary body, and returns the
@@ -197,7 +197,7 @@ def get_eqrec_coordinate_transform(Lat, Long, R, co, azikind='equidistant'):
 
 def get_eqrec_map(east='templates/equidistant.png',
                   west='templates/equidistant.png',
-                  azikind='equidistant', latlong=(720, 720), cutoff=(7, 1)):
+                  azikind='equidistant', latlong=(720, 720), cutoff=(-1, -1)):
     """
     This is a convenience function for creating a full equirectangular
     map from two hemisphere images, as described in make_eqrec_projection.
