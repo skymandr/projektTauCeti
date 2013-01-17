@@ -267,7 +267,9 @@ def make_azi_projection(image='templates/grid_double.png',
                                        azikind, padwith)
         return new_west, new_east
     else:
-        old_hemi, new_hemi = really_make_azi_projection(the_map, R)
+        old_hemi, new_hemi = \
+            really_make_azi_projection(the_map, R, azikind, padwith)
+
         return new_hemi
 
 
