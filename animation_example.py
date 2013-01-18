@@ -47,7 +47,7 @@ def make_animation(the_map='templates/grid_double.png', saveas="animated",
     """
     Fuction for creating frames in an animation of a rotating planet.
     """
-    
+
     map_image = plt.imread(the_map)
 
     while len(map_image.shape) > 2:
@@ -56,8 +56,8 @@ def make_animation(the_map='templates/grid_double.png', saveas="animated",
     for n in xrange(frames):
         centre = 90 + 360.0 * n / frames
         hem = get_hemisphere(map_image, centre, R, azikind, padwith)
-        plt.imsave("{0}_{1}.png".format(saveas, string.zfill(n, 
-                   np.ceil(np.log10(frames)).astype(np.int))), hem, 
+        plt.imsave("{0}_{1}.png".format(saveas, string.zfill(n,
+                   np.ceil(np.log10(frames)).astype(np.int))), hem,
                    cmap=plt.cm.gray)
 
 
