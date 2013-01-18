@@ -19,8 +19,8 @@
 
 
 This module contains functions for gettiang azimuthal views centered on
-arbitrary meridians from an equidistant rectangular map, and for making
-and saving frames for an animation based on such views
+arbitrary meridians from an equirectangular map, and for making and saving
+frames for an animation based on such views
 
 For more information on the different projections and options, please see
 the documentation for projekt_anarres.py!
