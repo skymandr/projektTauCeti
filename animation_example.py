@@ -61,21 +61,24 @@ def make_animation(the_map='templates/grid_double.png', saveas="animated",
                    cmap=plt.cm.gray)
 
 
-def get_hemisphere(map_image, centre=90.0, R=256, azikind='orthographic',
-                   padwith=0):
+def get_hemisphere(map_image, meridian=90.0, parallel=90.0, R=256,
+                   azikind='orthographic', padwith=0):
     """
     Function for getting an azimuthal view from a rectangular projection,
     centred on a particular meridian.
+
+    Currently only supports centering on standard parallel. This will be
+    fixed in a future version.
     """
 
-    centre_coord = (np.round(
-                   map_image.shape[1] * centre / 360.0))\
+    meridian_coord = (np.round(
+                   map_image.shape[1] * meridian / 360.0))\
                    .astype(np.int)
     min_coord = (np.ceil(
-                map_image.shape[1] * ((centre - 90.0)) / 360.0))\
+                map_image.shape[1] * ((meridian - 90.0)) / 360.0))\
                 .astype(np.int)
     max_coord = (np.ceil(
-                map_image.shape[1] * ((centre + 90.0)) / 360.0))\
+                map_image.shape[1] * ((meridian + 90.0)) / 360.0))\
                 .astype(np.int)
 
     Y, X = np.mgrid[0: map_image.shape[0], min_coord: max_coord]
