@@ -54,10 +54,12 @@ def make_animation(the_map='templates/grid_double.png', saveas="animated",
         map_image = map_image.mean(-1)
 
     for n in xrange(frames):
-        centre = 90 + 360.0 * n / frames
-        hem = get_hemisphere(map_image, centre, 90.0, R, azikind, padwith)
+        meridian = 90.0 + 360.0 * n / frames
+        parallel = 90.0
+        hemisphere = get_hemisphere(map_image, meridian, parallel,
+                                    R, azikind, padwith)
         plt.imsave("{0}_{1}.png".format(saveas, string.zfill(n,
-                   np.ceil(np.log10(frames)).astype(np.int))), hem,
+                   np.ceil(np.log10(frames)).astype(np.int))), hemisphere,
                    cmap=plt.cm.gray)
 
 
@@ -65,25 +67,33 @@ def get_hemisphere(map_image, meridian=90.0, parallel=90.0, R=256,
                    azikind='orthographic', padwith=0):
     """
     Function for getting an azimuthal view from a rectangular projection,
-    centred on a particular meridian.
-
-    Currently only supports centering on standard parallel. This will be
-    fixed in a future version.
+    centred on a particular meridian and parallel.
     """
 
     meridian_coord = (np.round(
                    map_image.shape[1] * meridian / 360.0))\
                    .astype(np.int)
-    min_coord = (np.ceil(
+    min_meridian = (np.ceil(
                 map_image.shape[1] * ((meridian - 90.0)) / 360.0))\
                 .astype(np.int)
-    max_coord = (np.ceil(
+    max_meridian = (np.ceil(
                 map_image.shape[1] * ((meridian + 90.0)) / 360.0))\
                 .astype(np.int)
 
-    Y, X = np.mgrid[0: map_image.shape[0], min_coord: max_coord]
+    parallel_coord = (np.round(
+                   map_image.shape[0] * parallel / 180.0))\
+                   .astype(np.int)
+    min_parallel = (np.ceil(
+                map_image.shape[0] * ((parallel - 90.0)) / 180.0))\
+                .astype(np.int)
+    max_parallel = (np.ceil(
+                map_image.shape[0] * ((parallel + 90.0)) / 180.0))\
+                .astype(np.int)
+
+    Y, X = np.mgrid[min_parallel: max_parallel, min_meridian: max_meridian]
 
     X %= map_image.shape[1]
+    Y %= map_image.shape[0]
 
     rectangular = map_image[(Y, X)]
 
