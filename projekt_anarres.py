@@ -459,7 +459,7 @@ def get_hemisphere(map_image, meridian=90.0, parallel=90.0, R=256,
     rectangular = map_image[(Y, X)]
 
     old_hemi, new_hemi = \
-         p.really_make_azi_projection(rectangular, R, azikind, padwith)
+         really_make_azi_projection(rectangular, R, azikind, padwith)
 
     return new_hemi
 
