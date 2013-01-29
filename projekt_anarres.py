@@ -81,10 +81,13 @@ def make_eqrec_projection(image='templates/equidistant.png',
                           azikind='equidistant',
                           latlong=(512, 512), cutoff=(-1, -1)):
     """
-    This function takes loads an image containing an azimuthal
-    projection of (one hemisphere of a) a planetary body, and returns the
-    corresponding equirectangular projection in a format specified by
-    latlong.
+    This is a wrapper function for really_make_eqrec_projection, to make
+    it simpler to automatically make an equidistant map from an
+    azimuthal source image.
+
+    This function loads an image containing an azimuthal projection of (one
+    hemisphere of a) a planetary body, and returns the corresponding
+    equirectangular projection in a format specified by latlong.
 
     The azimuthal projection is assumed to be centered, and the padding
     around it to be small. The padding can be adjusted for by calling it with
@@ -104,6 +107,33 @@ def make_eqrec_projection(image='templates/equidistant.png',
     # Flatten image:
     while len(the_image.shape) > 2:
         the_image = the_image.mean(-1)
+
+    the_image, new_image = \
+        really_make_eqrec_projection(the_image, azikind, latlong, cutoff)
+
+    return the_image, new_image
+
+
+def really_make_eqrec_projection(the_image, azikind='equidistant',
+                                 latlong=(512, 512), cutoff=(-1, -1)):
+    """
+    This function takes an array of flattened image data containing an
+    azimuthal projection of (one hemisphere of a) a planetary body, and returns
+    the corresponding equirectangular projection in a format specified by
+    latlong.
+
+    The azimuthal projection is assumed to be centered, and the padding
+    around it to be small. The padding can be adjusted for by calling it with
+    non-zero cutoff (unit is in pixels).
+
+    The azimimuthal projection can be of either orthographic, lambert,
+    equidistant (default) or stereographic kind, as specified by the azikind
+    parameter.
+
+    If the image is not in grey scale, it is flattend first.
+
+    Returns both old and new projection.
+    """
 
     # Prepare coordinates:
     Rz, Rx = the_image.shape[0] / 2, the_image.shape[1] / 2
