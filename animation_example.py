@@ -68,6 +68,8 @@ def get_hemisphere(map_image, meridian=90.0, parallel=90.0, R=256,
     """
     Function for getting an azimuthal view from a rectangular projection,
     centred on a particular meridian and parallel.
+
+    (This function is also implemented in projekt_anarres.py.)
     """
 
     meridian_coord = (np.round(
