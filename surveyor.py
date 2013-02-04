@@ -88,6 +88,11 @@ class PlanetarySurveyor(object):
         except ZeroDivisionError:
             return None, None
 
+    def draw_meridians(self):
+        pass
+
+    def draw_parallels(self):
+        pass
 
 filename = 'new/anarres_small_eq_2_grey.png'
 
