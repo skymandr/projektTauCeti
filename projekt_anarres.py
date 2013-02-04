@@ -461,6 +461,10 @@ def get_hemisphere(map_image, meridian=90.0, parallel=90.0, R=256,
     centred on a particular meridian and parallel.
     """
 
+    map_image = np.r_[map_image, np.flipud(
+                np.c_[map_image[1:, map_image.shape[1] / 2:],
+                      map_image[1:, : map_image.shape[1] / 2]])]
+
     meridian_coord = (np.round(
                    map_image.shape[1] * meridian / 360.0))\
                    .astype(np.int)
@@ -472,13 +476,13 @@ def get_hemisphere(map_image, meridian=90.0, parallel=90.0, R=256,
                 .astype(np.int)
 
     parallel_coord = (np.round(
-                   map_image.shape[0] * parallel / 180.0))\
+                   map_image.shape[0] * parallel / 360.0))\
                    .astype(np.int)
     min_parallel = (np.ceil(
-                map_image.shape[0] * ((parallel - 90.0)) / 180.0))\
+                map_image.shape[0] * ((parallel - 90.0)) / 360.0))\
                 .astype(np.int)
     max_parallel = (np.ceil(
-                map_image.shape[0] * ((parallel + 90.0)) / 180.0))\
+                map_image.shape[0] * ((parallel + 90.0)) / 360.0))\
                 .astype(np.int)
 
     Y, X = np.mgrid[min_parallel: max_parallel, min_meridian: max_meridian]
