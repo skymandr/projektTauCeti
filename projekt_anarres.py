@@ -455,7 +455,7 @@ def draw_azi_map(the_map, origin='upper'):
 
 
 def get_hemisphere(map_image, meridian=90.0, parallel=90.0, R=256,
-                   azikind='orthographic', padwith=0):
+                   azikind='orthographic', padwith=0, padding=0):
     """
     Function for getting an azimuthal view from a rectangular projection,
     centred on a particular meridian and parallel.
@@ -491,7 +491,12 @@ def get_hemisphere(map_image, meridian=90.0, parallel=90.0, R=256,
     old_hemi, new_hemi = \
          really_make_azi_projection(rectangular, R, azikind, padwith)
 
-    return new_hemi
+    hemi = np.zeros((new_hemi.shape[0] + 2 * padding,
+                     new_hemi.shape[1] + 2 * padding)) + padwith
+
+    hemi[padding: -padding, padding:-padding] = new_hemi
+
+    return hemi
 
 
 def test_projection(the_image='templates/equidistant.png',
