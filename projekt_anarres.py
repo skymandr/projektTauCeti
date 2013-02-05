@@ -454,16 +454,24 @@ def draw_azi_map(the_map, origin='upper'):
     plt.axis('off')
 
 
-def get_hemisphere(map_image, meridian=90.0, parallel=90.0, R=256,
+def get_azimuthal_hemisphere(map_image, meridian=90.0, parallel=90.0):
+    """
+    Function for getting a particular rectangular hemisphere view from a
+    rectangular projection, centred on a particular meridian and parallel.
+    """
+
+    return = np.r_[map_image, np.flipud(
+             np.c_[map_image[1:, map_image.shape[1] / 2:],
+                   map_image[1:, : map_image.shape[1] / 2]])]
+
+def get_azimuthal_hemisphere(map_image, meridian=90.0, parallel=90.0, R=256,
                    azikind='orthographic', padwith=0, padding=0):
     """
     Function for getting an azimuthal view from a rectangular projection,
     centred on a particular meridian and parallel.
     """
 
-    map_image = np.r_[map_image, np.flipud(
-                np.c_[map_image[1:, map_image.shape[1] / 2:],
-                      map_image[1:, : map_image.shape[1] / 2]])]
+    map_image = get_rectangular_hemisphere(map_image, meridian, parallel)
 
     meridian_coord = (np.round(
                    map_image.shape[1] * meridian / 360.0))\
