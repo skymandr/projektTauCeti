@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.widgets import Slider, Button, RadioButtons, Cursor
 import projekt_anarres as p
+from testgrids import make_testgrids as grids
 
 
 class PlanetarySurveyor(object):
