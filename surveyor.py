@@ -8,6 +8,7 @@ from matplotlib.widgets import Slider, Button, RadioButtons, Cursor
 from testgrids import make_testgrids as grids
 
 # TODO:
+#   - think about implementing arbitrary azimuthal
 #   - rectangular mode
 #   - radio buttons for picking mode
 #   - show grid
@@ -51,7 +52,7 @@ class PlanetarySurveyor(object):
         self.coord_axes = plt.axes([0.82, 0.14, 0.15, 0.04])
 
         # Setup sliders:
-        self.step = 45
+        self.step = 22.5
         self.parallels = 0
         self.meridians = 0
 
@@ -134,7 +135,7 @@ class PlanetarySurveyor(object):
                 x, y = np.round(event.xdata), np.round(event.ydata)
                 if self.mode == "azimuthal":
                     self.meridian += self.step * x
-                    self.parallel -= self.step * y
+                    #self.parallel -= self.step * y
                 elif self.mode == "rectangular":
                     self.meridian = x
                     self.parallel = -y
@@ -165,7 +166,7 @@ class PlanetarySurveyor(object):
 
 
 def main():
-    filename = 'new/urras_small_eq_grey.png'
+    filename = 'new/anarres_small_eq_2_grey.png'
     print filename
     Surveyor = PlanetarySurveyor(filename)
 
