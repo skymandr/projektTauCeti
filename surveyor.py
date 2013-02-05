@@ -80,12 +80,25 @@ class PlanetarySurveyor(object):
         elif self.mode == 'rectangular':
             pass
 
+    def update_display(self):
+        if self.mode == 'azimuthal':
+            self.hemisphere = p.get_azimuthal_hemisphere(
+                                self.map_image, self.meridian, self.parallel,
+                                self.R, padding=self.padding)
+            ax = self.display.axes
+            self.display = ax.imshow(self.hemisphere, cmap=plt.cm.gray,
+                                      extent=[-1.5, 1.5, -1.5, 1.5])
+            plt.axis([-1.5, 1.5, -1.5, 1.5])
+            plt.axis('off')
+        elif self.mode == 'rectangular':
+            pass
+
     def update(self, val):
         self.step = np.int(self.slider_step.val)
         self.meridians = np.int(self.slider_meridians.val)
         self.parallels = np.int(self.slider_parallels.val)
         
-        self.setup_display()
+        self.update_display()
 
         if self.meridians > 0 or self.parallels > 0:
             self.draw_graticules()
