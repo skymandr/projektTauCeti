@@ -1,3 +1,4 @@
+#! /usr/bin/env python
 import os
 import sys
 import projekt_anarres as p
@@ -33,9 +34,9 @@ class PlanetarySurveyor(object):
 
         self.click = self.display.figure.canvas.mpl_connect(
                         'button_press_event', self.mouseclick)
-    
+
         self.cursor = Cursor(self.display.axes, useblit=True, color='red',
-                             linewidth=1 )
+                             linewidth=1)
 
         plt.axis([-1.5, 1.5, -1.5, 1.5])
         plt.axis('off')
@@ -124,14 +125,11 @@ class PlanetarySurveyor(object):
         pass
 
 
-filename = 'new/anarres_small_eq_2_grey.png'
-
-Surveyor = PlanetarySurveyor(filename)
-
-
 def main():
     filename = 'new/anarres_small_eq_2_grey.png'
+    print filename
     Surveyor = PlanetarySurveyor(filename)
+
 
 if __name__ == "__main__":
     sys.exit(main())
