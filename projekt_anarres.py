@@ -308,7 +308,7 @@ def really_make_azi_projection(hemisphere, R=256,
     """
     From supplied image data, assumed to be one hemisphere of an
     equirectangular projection, transforms this into an azimuthal
-    projection. The resulting array has the shape (2*R+1, 2*R+1).
+    projection. The resulting array has the shape (2 * R, 2 * R).
 
     Can handle both orthographic, lambert, equidistant (default) and
     stereographic azimuthal projections, as specified by the parameter
@@ -323,7 +323,7 @@ def really_make_azi_projection(hemisphere, R=256,
     S = np.min(hemisphere.shape)
 
     # Prepare coordinates:
-    Z, X = np.mgrid[-1.0: 1.0: R * 1j, -1.0: 1.0: R * 1j]
+    Z, X = np.mgrid[-1.0: 1.0: 2 * R * 1j, -1.0: 1.0: 2 * R * 1j]
     Y = -np.sqrt(1.0 - Z ** 2 - X ** 2)
 
     # Make coordinate transform:

@@ -78,7 +78,7 @@ class PlanetarySurveyor(object):
         plt.show()
     
     def setup_display(self):
-        self.R = 360
+        self.R = 180
         self.padding = self.R / 10
         if self.mode == 'azimuthal':
             self.hemisphere = p.get_azimuthal_hemisphere(
