@@ -121,7 +121,7 @@ class PlanetarySurveyor(object):
             return None, None
 
     def draw_graticules(self):
-
+        pass
 
 
 filename = 'new/anarres_small_eq_2_grey.png'
@@ -131,7 +131,7 @@ Surveyor = PlanetarySurveyor(filename)
 
 def main():
     filename = 'new/anarres_small_eq_2_grey.png'
-    Surveyor = PlanetSurveyor(filename)
+    Surveyor = PlanetarySurveyor(filename)
 
 if __name__ == "__main__":
     sys.exit(main())
