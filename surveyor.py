@@ -126,6 +126,7 @@ class PlanetarySurveyor(object):
     def draw_parallels(self):
         pass
 
+
 filename = 'new/anarres_small_eq_2_grey.png'
 
 Surveyor = PlanetarySurveyor(filename)
