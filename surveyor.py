@@ -12,7 +12,6 @@ from testgrids import make_testgrids as grids
 #   - rectangular mode
 #   - radio buttons for picking mode
 #   - show grid
-#   - fix map mirror bug in projekt_anarres
 
 
 class PlanetarySurveyor(object):
