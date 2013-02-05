@@ -125,6 +125,8 @@ class PlanetarySurveyor(object):
         self.slider_step.reset()
         self.slider_meridians.reset()
         self.slider_parallels.reset()
+        self.meridian = 90
+        self.parallel = 90
 
     def mouseclick(self, event):
         if event.inaxes == self.display.axes:
@@ -163,7 +165,7 @@ class PlanetarySurveyor(object):
 
 
 def main():
-    filename = 'new/anarres_small_eq_2_grey.png'
+    filename = 'new/urras_small_eq_grey.png'
     print filename
     Surveyor = PlanetarySurveyor(filename)
 

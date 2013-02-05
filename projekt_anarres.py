@@ -460,9 +460,8 @@ def get_rectangular_hemisphere(map_image, meridian=90.0, parallel=90.0):
     rectangular projection, centred on a particular meridian and parallel.
     """
 
-    return np.r_[map_image, np.flipud(
-           np.c_[map_image[1:, map_image.shape[1] / 2:],
-                 map_image[1:, : map_image.shape[1] / 2]])]
+    return np.r_[map_image, np.rot90(np.rot90(map_image[1:, :]))]
+
 
 def get_azimuthal_hemisphere(map_image, meridian=90.0, parallel=90.0, R=256,
                    azikind='orthographic', padwith=0, padding=0):
