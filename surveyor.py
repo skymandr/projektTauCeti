@@ -1,7 +1,9 @@
+import os
+import sys
+import projekt_anarres as p
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.widgets import Slider, Button, RadioButtons, Cursor
-import projekt_anarres as p
 from testgrids import make_testgrids as grids
 
 
@@ -78,11 +80,8 @@ class PlanetarySurveyor(object):
                                            padding=self.padding)
         self.display.set_data(self.hemisphere)
 
-        if self.meridians > 0:
-            self.draw_meridians()
-
-        if self.parallels > 0:
-            self.draw_parallels()
+        if self.meridians > 0 or self.parallels > 0:
+            self.draw_graticules()
 
         #print self.get_coordinates()
         #print self.get_graticule()
@@ -121,13 +120,18 @@ class PlanetarySurveyor(object):
         except ZeroDivisionError:
             return None, None
 
-    def draw_meridians(self):
-        pass
+    def draw_graticules(self):
 
-    def draw_parallels(self):
-        pass
 
 
 filename = 'new/anarres_small_eq_2_grey.png'
 
 Surveyor = PlanetarySurveyor(filename)
+
+
+def main():
+    filename = 'new/anarres_small_eq_2_grey.png'
+    Surveyor = PlanetSurveyor(filename)
+
+if __name__ == "__main__":
+    sys.exit(main())
