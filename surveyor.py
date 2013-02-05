@@ -8,9 +8,10 @@ from matplotlib.widgets import Slider, Button, RadioButtons, Cursor
 from testgrids import make_testgrids as grids
 
 # TODO:
-#   - radio buttons for picking mode
 #   - rectangular mode
+#   - radio buttons for picking mode
 #   - show grid
+#   - fix map mirror bug in projekt_anarres
 
 
 class PlanetarySurveyor(object):
