@@ -7,6 +7,11 @@ import matplotlib.pyplot as plt
 from matplotlib.widgets import Slider, Button, RadioButtons, Cursor
 from testgrids import make_testgrids as grids
 
+# TODO:
+#   - radio buttons for picking mode
+#   - rectangular mode
+#   - show grid
+
 
 class PlanetarySurveyor(object):
     def __init__(self, filename):
@@ -18,6 +23,7 @@ class PlanetarySurveyor(object):
 
         self.map_image = map_image
 
+        # Setup display:
         self.fig = plt.figure(1)
         self.ax = plt.subplot(111)
         plt.clf()
@@ -29,24 +35,27 @@ class PlanetarySurveyor(object):
 
         self.setup_display()
 
+        # Setip mouse interaction:
         self.click = self.display.figure.canvas.mpl_connect(
                         'button_press_event', self.mouseclick)
 
         self.cursor = Cursor(self.display.axes, useblit=True, color='red',
                              linewidth=1)
 
+        # Setup axes:
         self.axes_step = plt.axes([0.15, 0.15, 0.60, 0.03])
         self.axes_meridians = plt.axes([0.15, 0.10, 0.60, 0.03])
         self.axes_parallels = plt.axes([0.15, 0.05, 0.60, 0.03])
-        self.reset_axes = plt.axes([0.8, 0.05, 0.15, 0.04])
-        self.coord_axes = plt.axes([0.8, 0.14, 0.15, 0.04])
+        self.reset_axes = plt.axes([0.82, 0.05, 0.15, 0.04])
+        self.coord_axes = plt.axes([0.82, 0.14, 0.15, 0.04])
 
+        # Setup sliders:
         self.step = 45
         self.parallels = 0
         self.meridians = 0
 
         self.slider_step = Slider(self.axes_step, 'Step', 0, 90,
-                                  valinit=self.step, valfmt='%2d')
+                                  valinit=self.step, valfmt='%2.1f')
         self.slider_meridians = Slider(self.axes_meridians, 'Meridians', 0,
                                        42, valinit=self.parallels,
                                        valfmt='%2d')
@@ -58,6 +67,7 @@ class PlanetarySurveyor(object):
         self.slider_meridians.on_changed(self.update)
         self.slider_parallels.on_changed(self.update)
 
+        # Setup button(s):
         self.button = Button(self.reset_axes, 'Reset')
         self.button.on_clicked(self.reset)
 
@@ -94,7 +104,9 @@ class PlanetarySurveyor(object):
             pass
 
     def update(self, val):
-        self.step = np.int(self.slider_step.val)
+        if self.step != self.slider_step.val:
+            self.step = np.round(self.slider_step.val / 0.5) * 0.5
+            self.slider_step.set_val(self.step)
         self.meridians = np.int(self.slider_meridians.val)
         self.parallels = np.int(self.slider_parallels.val)
         
@@ -131,8 +143,8 @@ class PlanetarySurveyor(object):
                 self.update(0)
 
     def get_coordinates(self):
-        parallel = np.int(self.parallel)
-        meridian = np.int(self.meridian)
+        parallel = self.parallel
+        meridian = self.meridian
 
         return parallel, meridian
 
