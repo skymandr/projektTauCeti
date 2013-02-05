@@ -22,15 +22,12 @@ class PlanetarySurveyor(object):
         self.ax = plt.subplot(111)
         plt.clf()
         plt.subplots_adjust(left=0.1, bottom=0.20)
+
         self.meridian = 90
         self.parallel = 90
-        self.R = 360
-        self.padding = self.R / 10
-        hemisphere = p.get_hemisphere(self.map_image, self.meridian,
-                                      self.parallel, self.R,
-                                      padding=self.padding)
-        self.display = plt.imshow(hemisphere, cmap=plt.cm.gray,
-                                  extent=[-1.5, 1.5, -1.5, 1.5])
+        self.mode = "azimuthal"
+
+        self.setup_display()
 
         self.click = self.display.figure.canvas.mpl_connect(
                         'button_press_event', self.mouseclick)
@@ -38,8 +35,6 @@ class PlanetarySurveyor(object):
         self.cursor = Cursor(self.display.axes, useblit=True, color='red',
                              linewidth=1)
 
-        plt.axis([-1.5, 1.5, -1.5, 1.5])
-        plt.axis('off')
         self.axes_step = plt.axes([0.15, 0.15, 0.60, 0.03])
         self.axes_meridians = plt.axes([0.15, 0.10, 0.60, 0.03])
         self.axes_parallels = plt.axes([0.15, 0.05, 0.60, 0.03])
@@ -70,16 +65,27 @@ class PlanetarySurveyor(object):
                                               self.get_coordinates()))
 
         plt.show()
+    
+    def setup_display(self):
+        self.R = 360
+        self.padding = self.R / 10
+        if self.mode == 'azimuthal':
+            self.hemisphere = p.get_azimuthal_hemisphere(
+                                self.map_image, self.meridian, self.parallel,
+                                self.R, padding=self.padding)
+            self.display = plt.imshow(self.hemisphere, cmap=plt.cm.gray,
+                                      extent=[-1.5, 1.5, -1.5, 1.5])
+            plt.axis([-1.5, 1.5, -1.5, 1.5])
+            plt.axis('off')
+        elif self.mode == 'rectangular':
+            pass
 
     def update(self, val):
         self.step = np.int(self.slider_step.val)
         self.meridians = np.int(self.slider_meridians.val)
         self.parallels = np.int(self.slider_parallels.val)
-
-        self.hemisphere = p.get_hemisphere(self.map_image, self.meridian,
-                                           self.parallel, self.R,
-                                           padding=self.padding)
-        self.display.set_data(self.hemisphere)
+        
+        self.setup_display()
 
         if self.meridians > 0 or self.parallels > 0:
             self.draw_graticules()
@@ -98,8 +104,13 @@ class PlanetarySurveyor(object):
         if event.inaxes == self.display.axes:
             if event.button == 1:
                 x, y = np.round(event.xdata), np.round(event.ydata)
-                self.meridian += self.step * x
-                self.parallel -= self.step * y
+                if self.mode == "azimuthal":
+                    self.meridian += self.step * x
+                    self.parallel -= self.step * y
+                elif self.mode == "rectangular":
+                    self.meridian = x
+                    self.parallel = -y
+
                 self.meridian %= 360.0
                 self.parallel %= 360.0
                 self.coords.label.set_text("{0}".format(
