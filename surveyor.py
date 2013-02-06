@@ -10,8 +10,17 @@ from testgrids import make_testgrids as grids
 
 # TODO:
 #   - grid
+#   - add radio-buttons for:
+#       * orthographic
+#       * lambert
+#       * equidistant
+#       * stereographic
+#       * rectangular
+#       (the radio buttons should also set mode appropriately)
+#   - implement those
 #   - file assignment on startup
 #   - documentation
+
 
 class PlanetarySurveyor(object):
     def __init__(self, filename):
@@ -47,8 +56,8 @@ class PlanetarySurveyor(object):
         self.axes_step = plt.axes([0.15, 0.15, 0.60, 0.03])
         self.axes_meridians = plt.axes([0.15, 0.10, 0.60, 0.03])
         self.axes_parallels = plt.axes([0.15, 0.05, 0.60, 0.03])
-        self.reset_axes = plt.axes([0.82, 0.05, 0.15, 0.04])
-        self.coord_axes = plt.axes([0.82, 0.14, 0.15, 0.04])
+        self.reset_axes = plt.axes([0.84, 0.05, 0.15, 0.04])
+        self.coord_axes = plt.axes([0.84, 0.14, 0.15, 0.04])
 
         # Setup sliders:
         self.step = 22.5
@@ -80,28 +89,31 @@ class PlanetarySurveyor(object):
     def setup_display(self):
         self.R = 180
         self.padding = self.R / 10
+        print self.padding
         if self.mode == 'azimuthal':
             self.hemisphere = p.get_azimuthal_hemisphere(
-                                self.map_image, self.meridian, self.parallel,
-                                self.R, self.projection, self.padding)
+                                self.map_image, self.meridian, 0,
+                                self.R, self.projection, 0, self.padding)
             self.display = plt.imshow(self.hemisphere, cmap=plt.cm.gray,
                                       extent=[-1.5, 1.5, -1.5, 1.5])
             plt.axis([-1.5, 1.5, -1.5, 1.5])
             plt.axis('off')
         elif self.mode == 'rectangular':
+            plt.axis([-180, 180, -90, 90])
             pass
 
     def update_display(self):
         if self.mode == 'azimuthal':
             self.hemisphere = p.get_azimuthal_hemisphere(
-                                self.map_image, self.meridian, self.parallel,
-                                self.R, self.projection, self.padding)
+                                self.map_image, self.meridian, 0,
+                                self.R, self.projection, 0, self.padding)
             ax = self.display.axes
             self.display = ax.imshow(self.hemisphere, cmap=plt.cm.gray,
                                       extent=[-1.5, 1.5, -1.5, 1.5])
             plt.axis([-1.5, 1.5, -1.5, 1.5])
             plt.axis('off')
         elif self.mode == 'rectangular':
+            plt.axis([-180, 180, -90, 90])
             pass
 
     def update(self, val):
@@ -109,16 +121,16 @@ class PlanetarySurveyor(object):
             self.step = np.round(self.slider_step.val / 0.5) * 0.5
             self.slider_step.set_val(self.step)
 
-        self.meridians = np.int(self.slider_meridians.val)
-        self.parallels = np.int(self.slider_parallels.val)
+        if (self.meridians != self.slider_meridians.val or
+                self.parallels != self.slider_parallels.val):
 
-        self.update_display()
+            self.meridians = np.int(self.slider_meridians.val)
+            self.parallels = np.int(self.slider_parallels.val)
 
-        if self.meridians > 0 or self.parallels > 0:
-            self.draw_graticules()
-
-        #print self.get_coordinates()
-        #print self.get_graticule()
+            if self.meridians > 0 or self.parallels > 0:
+                self.draw_graticules()
+            else:
+                self.update_display()
 
         plt.draw()
 
@@ -132,25 +144,45 @@ class PlanetarySurveyor(object):
     def mouseclick(self, event):
         if event.inaxes == self.display.axes:
             if event.button == 1:
-                x, y = np.round(event.xdata), np.round(event.ydata)
                 if self.mode == "azimuthal":
-                    self.meridian += self.step * x
-                    #self.parallel -= self.step * y
+                    self.meridian += self.step * np.round(event.xdata)
                 elif self.mode == "rectangular":
-                    self.meridian = x
-                    self.parallel = -y
+                    self.parallel = np.round(event.ydata / 0.5) * 0.5
+                    self.meridian = np.round(event.xdata / 0.5) * 0.5
 
-                self.meridian %= 360.0
-                self.parallel %= 360.0
-                self.coords.label.set_text("{0}".format(
-                                           self.get_coordinates()))
+                self.fix_coordinates()
+
                 self.update(0)
+                self.update_display()
+
+    def fix_coordinates(self):
+            if self.parallel > 90.0:
+                self.parallel = 180.0 - self.parallel
+            elif self.parallel < -90.0:
+                self.parallel = -180.0 - self.parallel
+
+            if self.meridian > 180.0:
+                self.meridian = 360.0 - self.meridian
+            elif self.meridian < -180.0:
+                self.meridian = -360.0 - self.meridian
+
+            self.coords.label.set_text("{0}".format(self.get_coordinates()))
 
     def get_coordinates(self):
-        parallel = self.parallel
-        meridian = self.meridian
+        parallel = np.abs(self.parallel)
+        meridian = np.abs(self.meridian)
 
-        return parallel, meridian
+        if self.parallel >= 0:
+            NS = "N"
+        else:
+            NS = "S"
+
+        if self.meridian >= 0:
+            EW = "E"
+        else:
+            EW = "W"
+
+        return "{0} {1}, {2} {3}".format(parallel, NS, meridian, EW)
 
     def get_graticule(self):
         try:
@@ -162,7 +194,7 @@ class PlanetarySurveyor(object):
             return None, None
 
     def draw_graticules(self):
-        pass
+        self.update_display()
 
 
 def main():

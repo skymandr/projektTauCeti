@@ -129,10 +129,10 @@ class PlanetarySurveyor(object):
             self.meridians = np.int(self.slider_meridians.val)
             self.parallels = np.int(self.slider_parallels.val)
 
-            self.update_display()
-
             if self.meridians > 0 or self.parallels > 0:
                 self.draw_graticules()
+            else:
+                self.update_display()
 
         plt.draw()
 

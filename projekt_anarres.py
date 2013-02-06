@@ -472,6 +472,9 @@ def get_azimuthal_hemisphere(map_image, meridian=90.0, parallel=90.0, R=256,
 
     if parallel != 90.0:
         print "Azimuthal projection currently only handles standard parallel!"
+        print "Will return something, but it makes no cartographic sense!"
+
+        map_image = get_rectangular_hemisphere(map_image, meridian, parallel)
 
     meridian_coord = (np.round(
                    map_image.shape[1] * meridian / 360.0))\
@@ -506,7 +509,7 @@ def get_azimuthal_hemisphere(map_image, meridian=90.0, parallel=90.0, R=256,
     hemi = np.zeros((new_hemi.shape[0] + 2 * padding,
                      new_hemi.shape[1] + 2 * padding)) + padwith
 
-    hemi[padding: -padding, padding:-padding] = new_hemi
+    hemi[padding: -padding, padding: -padding] = new_hemi
 
     return hemi
 
