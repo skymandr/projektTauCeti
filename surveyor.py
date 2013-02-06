@@ -77,7 +77,7 @@ class PlanetarySurveyor(object):
                                               self.get_coordinates()))
 
         plt.show()
-    
+
     def setup_display(self):
         self.R = 180
         self.padding = self.R / 10
@@ -109,9 +109,10 @@ class PlanetarySurveyor(object):
         if self.step != self.slider_step.val:
             self.step = np.round(self.slider_step.val / 0.5) * 0.5
             self.slider_step.set_val(self.step)
+
         self.meridians = np.int(self.slider_meridians.val)
         self.parallels = np.int(self.slider_parallels.val)
-        
+
         self.update_display()
 
         if self.meridians > 0 or self.parallels > 0:
