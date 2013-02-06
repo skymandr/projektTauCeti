@@ -5,6 +5,7 @@ import projekt_anarres as p
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.widgets import Slider, Button, RadioButtons, Cursor
+from mpl_toolkits.basemap import Basemap
 from testgrids import make_testgrids as grids
 
 
