@@ -14,7 +14,6 @@ from testgrids import make_testgrids as grids
 #   - remove mode
 #   - make radiobuttons for the following projections:
 #       * orthographic
-#       * Lambert equal-area
 #       * azimuthal equidistant
 #       * equirectangular
 #   - implement the above projections
