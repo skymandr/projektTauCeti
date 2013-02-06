@@ -8,6 +8,9 @@ from matplotlib.widgets import Slider, Button, RadioButtons, Cursor
 from testgrids import make_testgrids as grids
 
 
+# TODO:
+#   - grid
+
 class PlanetarySurveyor(object):
     def __init__(self, filename):
         self.filename = filename
