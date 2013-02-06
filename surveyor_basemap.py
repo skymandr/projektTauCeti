@@ -9,6 +9,17 @@ from mpl_toolkits.basemap import Basemap
 from testgrids import make_testgrids as grids
 
 
+# TODO:
+#   - conversion to basemap
+#   - remove mode
+#   - make radiobuttons for the following projections:
+#       * orthographic
+#       * Lambert equal-area
+#       * azimuthal equidistant
+#       * equirectangular
+#   - implement the above projections
+
+
 class PlanetarySurveyor(object):
     def __init__(self, filename):
         self.filename = filename
