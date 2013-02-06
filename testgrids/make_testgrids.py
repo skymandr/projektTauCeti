@@ -241,7 +241,7 @@ def make_azimuthal_showcase(graticule=15, resolution=1, fign=1, clearit=True,
         ax.set_yticklabels([])
         plt.axis('equal')
         plt.axis([-1.04, 1.04, -1.04, 1.04])
-        
+
         plt.title(src)
 
 
