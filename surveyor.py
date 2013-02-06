@@ -8,9 +8,9 @@ from matplotlib.widgets import Slider, Button, RadioButtons, Cursor
 from testgrids import make_testgrids as grids
 
 # TODO:
-#   - think about implementing arbitrary azimuthal
 #   - rectangular mode
 #   - radio buttons for picking mode
+#   - radio buttons for picking projection
 #   - show grid
 
 
@@ -33,6 +33,7 @@ class PlanetarySurveyor(object):
         self.meridian = 90
         self.parallel = 90
         self.mode = "azimuthal"
+        self.projection = "orthographic"
 
         self.setup_display()
 
@@ -83,7 +84,7 @@ class PlanetarySurveyor(object):
         if self.mode == 'azimuthal':
             self.hemisphere = p.get_azimuthal_hemisphere(
                                 self.map_image, self.meridian, self.parallel,
-                                self.R, padding=self.padding)
+                                self.R, self.projection, self.padding)
             self.display = plt.imshow(self.hemisphere, cmap=plt.cm.gray,
                                       extent=[-1.5, 1.5, -1.5, 1.5])
             plt.axis([-1.5, 1.5, -1.5, 1.5])
@@ -95,7 +96,7 @@ class PlanetarySurveyor(object):
         if self.mode == 'azimuthal':
             self.hemisphere = p.get_azimuthal_hemisphere(
                                 self.map_image, self.meridian, self.parallel,
-                                self.R, padding=self.padding)
+                                self.R, self.projection, self.padding)
             ax = self.display.axes
             self.display = ax.imshow(self.hemisphere, cmap=plt.cm.gray,
                                       extent=[-1.5, 1.5, -1.5, 1.5])
