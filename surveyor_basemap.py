@@ -12,6 +12,8 @@ from mpl_toolkits.basemap import Basemap
 #       * orthographic
 #       * azimuthal equidistant
 #       * equirectangular
+#   - file assignment on startup
+#   - documentation
 
 
 class PlanetarySurveyor(object):

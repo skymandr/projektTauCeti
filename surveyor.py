@@ -10,6 +10,8 @@ from testgrids import make_testgrids as grids
 
 # TODO:
 #   - grid
+#   - file assignment on startup
+#   - documentation
 
 class PlanetarySurveyor(object):
     def __init__(self, filename):
