@@ -16,7 +16,7 @@ from testgrids import make_testgrids as grids
 #       * equidistant
 #       * stereographic
 #       * rectangular
-#       (the radio buttons should also set mode appropriately)
+#       (the radio buttons should also set mode and parallel appropriately)
 #   - implement those
 #   - file assignment on startup
 #   - documentation
