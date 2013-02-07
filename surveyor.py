@@ -9,7 +9,6 @@ from testgrids import make_testgrids as grids
 
 
 # TODO:
-#   - grid
 #   - add radio-buttons for:
 #       * orthographic
 #       * lambert
@@ -35,8 +34,8 @@ class PlanetarySurveyor(object):
 
         self.meridian = 90
         self.parallel = 90
-        self.parallels = 0
-        self.meridians = 0
+        self.parallels = 16
+        self.meridians = 16
         self.mode = "azimuthal"
         self.projection = "orthographic"
 
@@ -63,10 +62,10 @@ class PlanetarySurveyor(object):
         self.slider_step = Slider(self.axes_step, 'Step', 0, 90,
                                   valinit=self.step, valfmt='%2.1f')
         self.slider_meridians = Slider(self.axes_meridians, 'Meridians', 0,
-                                       42, valinit=self.parallels,
+                                       64, valinit=self.parallels,
                                        valfmt='%2d')
         self.slider_parallels = Slider(self.axes_parallels, 'Parallels', 0,
-                                       42, valinit=self.parallels,
+                                       64, valinit=self.parallels,
                                        valfmt='%2d')
 
         self.slider_step.on_changed(self.update)
@@ -124,6 +123,7 @@ class PlanetarySurveyor(object):
                                 self.map_image, self.meridian, 90,
                                 self.R, self.projection, 0, self.padding)
             ax = self.display.axes
+            self.display.axes.cla()
             self.display = ax.imshow(self.hemisphere, cmap=plt.cm.gray,
                                       extent=[-1.5, 1.5, -1.5, 1.5])
             plt.axis([-1.5, 1.5, -1.5, 1.5])
@@ -145,8 +145,10 @@ class PlanetarySurveyor(object):
         if (self.meridians != self.slider_meridians.val or
                 self.parallels != self.slider_parallels.val):
 
-            self.meridians = np.int(self.slider_meridians.val)
-            self.parallels = np.int(self.slider_parallels.val)
+            self.meridians = np.round(self.slider_meridians.val
+                                      ).astype(np.int)
+            self.parallels = np.round(self.slider_parallels.val
+                                      ).astype(np.int)
 
         self.fix_coordinates()
 
@@ -207,15 +209,31 @@ class PlanetarySurveyor(object):
 
     def get_graticule(self):
         try:
-            dLat = np.round(180.0 / self.parallels).astype(np.int)
-            dLon = np.round(360.0 / self.meridians).astype(np.int)
-
-            return dLat, dLon
+            dLat = 180.0 / self.parallels
         except ZeroDivisionError:
-            return None, None
+            dLat = None
+        try:
+            dLon = 360.0 / self.meridians
+        except ZeroDivisionError:
+            dLon = 0
+
+        return dLat, dLon
 
     def draw_graticules(self):
-        pass
+        dLat, dLon = self.get_graticule()
+
+        if self.meridians > 0:
+            x_mer, z_mer = grids.get_meridians(self.meridian, dLon, 1,
+                                               1.5 / 1.1, self.projection)
+            self.display.axes.plot(x_mer, z_mer, ':k', label="meridians")
+            print x_mer.min(), x_mer.max(), x_mer.shape
+
+        if self.parallels > 0:
+            x_par, z_par = grids.get_parallels(self.parallel, dLat, 1,
+                                               1.5 / 1.1, self.projection)
+            self.display.axes.plot(x_par, z_par, ':k', label="parallels")
+        
+        self.display.axes.axis('off')
 
 
 def main():

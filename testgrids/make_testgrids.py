@@ -210,6 +210,41 @@ def make_test(graticule=15, resolution=1, fign=1, clearit=True,
                 plt.title("assumption:\n" + dest, size='medium')
 
 
+def get_parallels(meridian=90, graticule=22.5, resolution=1, R=1.0,
+                  azikind="equidistant"):
+    """
+    Convenience function for getting parallels with a certain offset, spacing
+    and resolution.
+    """
+
+    min_mer = np.ceil((meridian - 90) / graticule) * graticule
+    max_mer = min_mer + 181
+
+    Lat, Lon = np.mgrid[0: 181: resolution, 0: 181: graticule] * np.pi / 180
+    
+    x_par, z_par = get_eqrec_coordinate_transform(Lat, Lon, R, azikind)
+
+    return x_par.T, z_par.T
+
+    
+def get_meridians(meridian=90, graticule=22.5, resolution=1, R=1.0,
+                  azikind="equidistant"):
+    """
+    Convenience function for getting meridians with a certain offset, spacing
+    and resolution.
+    """
+
+    min_mer = ((meridian - 90) % 360.0 / graticule -
+               np.floor_divide((meridian - 90) % 360, graticule)) * graticule
+
+    Lat, Lon = np.mgrid[min_mer: 181: graticule,
+                        0: 181: resolution] * np.pi / 180
+    
+    x_mer, z_mer = get_eqrec_coordinate_transform(Lat, Lon, R, azikind)
+
+    return x_mer, z_mer
+
+
 def make_azimuthal_showcase(graticule=15, resolution=1, fign=1, clearit=True,
                             projections=('orthographic', 'lambert',
                                          'equidistant', 'stereographic')):

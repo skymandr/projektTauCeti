@@ -140,8 +140,10 @@ class PlanetarySurveyor(object):
         if (self.meridians != self.slider_meridians.val or
                 self.parallels != self.slider_parallels.val):
 
-            self.meridians = np.int(self.slider_meridians.val)
-            self.parallels = np.int(self.slider_parallels.val)
+            self.meridians = np.round(self.slider_meridians.val
+                                      ).astype(np.int)
+            self.parallels = np.round(self.slider_parallels.val
+                                      ).astype(np.int)
 
         self.fix_coordinates()
 
