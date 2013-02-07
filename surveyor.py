@@ -9,7 +9,6 @@ from testgrids import make_testgrids as grids
 
 
 # TODO:
-#   - update button
 #   - coordinates
 #   - grid
 #   - add radio-buttons for:
@@ -37,6 +36,8 @@ class PlanetarySurveyor(object):
 
         self.meridian = 90
         self.parallel = 90
+        self.parallels = 0
+        self.meridians = 0
         self.mode = "azimuthal"
         self.projection = "orthographic"
 
@@ -53,13 +54,13 @@ class PlanetarySurveyor(object):
         self.axes_step = plt.axes([0.15, 0.15, 0.60, 0.03])
         self.axes_meridians = plt.axes([0.15, 0.10, 0.60, 0.03])
         self.axes_parallels = plt.axes([0.15, 0.05, 0.60, 0.03])
-        self.reset_axes = plt.axes([0.84, 0.05, 0.15, 0.04])
+
         self.coord_axes = plt.axes([0.84, 0.14, 0.15, 0.04])
+        self.update_axes = plt.axes([0.84, 0.095, 0.15, 0.04])
+        self.reset_axes = plt.axes([0.84, 0.05, 0.15, 0.04])
 
         # Setup sliders:
         self.step = 22.5
-        self.parallels = 0
-        self.meridians = 0
 
         self.slider_step = Slider(self.axes_step, 'Step', 0, 90,
                                   valinit=self.step, valfmt='%2.1f')
@@ -75,11 +76,14 @@ class PlanetarySurveyor(object):
         self.slider_parallels.on_changed(self.update)
 
         # Setup button(s):
-        self.button = Button(self.reset_axes, 'Reset')
-        self.button.on_clicked(self.reset)
-
         self.coords = Button(self.coord_axes, '{0}'.format(
                                               self.get_coordinates()))
+
+        self.update_button = Button(self.update_axes, 'Update')
+        self.update_button.on_clicked(self.update_display)
+
+        self.reset_button = Button(self.reset_axes, 'Reset')
+        self.reset_button.on_clicked(self.reset)
 
         plt.show()
 
@@ -114,7 +118,10 @@ class PlanetarySurveyor(object):
             plt.axis([-180, 180, -90, 90])
             pass
 
-    def update_display(self):
+        if self.meridians > 0 or self.parallels > 0:
+            self.draw_graticules()
+
+    def update_display(self, val=0):
         if self.mode == 'azimuthal':
             self.hemisphere = p.get_azimuthal_hemisphere(
                                 self.map_image, self.meridian, 90,
@@ -128,7 +135,12 @@ class PlanetarySurveyor(object):
             plt.axis([-180, 180, -90, 90])
             pass
 
-    def update(self, val):
+        if self.meridians > 0 or self.parallels > 0:
+            self.draw_graticules()
+
+        self.update()
+
+    def update(self, val=0):
         if self.step != self.slider_step.val:
             self.step = np.round(self.slider_step.val / 0.5) * 0.5
             self.slider_step.set_val(self.step)
@@ -138,11 +150,6 @@ class PlanetarySurveyor(object):
 
             self.meridians = np.int(self.slider_meridians.val)
             self.parallels = np.int(self.slider_parallels.val)
-
-            if self.meridians > 0 or self.parallels > 0:
-                self.draw_graticules()
-            else:
-                self.update_display()
 
         plt.draw()
 
@@ -164,7 +171,7 @@ class PlanetarySurveyor(object):
 
                 self.fix_coordinates()
 
-                self.update(0)
+                self.update()
                 self.update_display()
 
     def fix_coordinates(self):
@@ -209,7 +216,7 @@ class PlanetarySurveyor(object):
             return None, None
 
     def draw_graticules(self):
-        self.update_display()
+        pass
 
 
 def main():

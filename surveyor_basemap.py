@@ -8,7 +8,6 @@ from mpl_toolkits.basemap import Basemap
 
 
 # TODO:
-#   - update button
 #   - make radiobuttons for the following projections:
 #       * orthographic
 #       * azimuthal equidistant
@@ -46,8 +45,10 @@ class PlanetarySurveyor(object):
         self.axes_step = plt.axes([0.15, 0.15, 0.60, 0.03])
         self.axes_meridians = plt.axes([0.15, 0.10, 0.60, 0.03])
         self.axes_parallels = plt.axes([0.15, 0.05, 0.60, 0.03])
-        self.reset_axes = plt.axes([0.84, 0.05, 0.15, 0.04])
+
         self.coord_axes = plt.axes([0.84, 0.14, 0.15, 0.04])
+        self.update_axes = plt.axes([0.84, 0.095, 0.15, 0.04])
+        self.reset_axes = plt.axes([0.84, 0.05, 0.15, 0.04])
 
         # Setup sliders:
         self.step = 22.5
@@ -65,11 +66,14 @@ class PlanetarySurveyor(object):
         self.slider_parallels.on_changed(self.update)
 
         # Setup button(s):
-        self.button = Button(self.reset_axes, 'Reset')
-        self.button.on_clicked(self.reset)
-
         self.coords = Button(self.coord_axes, '{0}'.format(
                                               self.get_coordinates()))
+
+        self.update_button = Button(self.update_axes, 'Update')
+        self.update_button.on_clicked(self.update_display)
+
+        self.button = Button(self.reset_axes, 'Reset')
+        self.button.on_clicked(self.reset)
 
         plt.show()
 
@@ -128,7 +132,9 @@ class PlanetarySurveyor(object):
         self.hemisphere.drawmapboundary()
         self.draw_graticules()
 
-    def update(self, val):
+        self.update()
+
+    def update(self, val=0):
         if self.step != self.slider_step.val:
             self.step = np.round(self.slider_step.val / 0.5) * 0.5
             self.slider_step.set_val(self.step)
@@ -139,11 +145,6 @@ class PlanetarySurveyor(object):
             self.meridians = np.int(self.slider_meridians.val)
             self.parallels = np.int(self.slider_parallels.val)
 
-            if self.meridians > 0 or self.parallels > 0:
-                self.draw_graticules()
-            else:
-                self.update_display()
-
         plt.draw()
 
     def reset(self, event):
@@ -152,7 +153,7 @@ class PlanetarySurveyor(object):
         self.slider_parallels.reset()
         self.meridian = 90
         self.parallel = 0
-        self.update(0)
+        self.update()
 
     def mouseclick(self, event):
         if event.inaxes == self.hemisphere_axes:
@@ -176,7 +177,7 @@ class PlanetarySurveyor(object):
 
                 self.fix_coordinates()
 
-                self.update(0)
+                self.update()
 
     def fix_coordinates(self):
             if self.parallel > 90.0:
