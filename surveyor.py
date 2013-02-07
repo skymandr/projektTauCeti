@@ -9,7 +9,6 @@ from testgrids import make_testgrids as grids
 
 
 # TODO:
-#   - coordinates
 #   - grid
 #   - add radio-buttons for:
 #       * orthographic
@@ -175,36 +174,37 @@ class PlanetarySurveyor(object):
                 self.update_display()
 
     def fix_coordinates(self):
-#            if self.parallel > 90.0:
-#                self.parallel = 180.0 - self.parallel
-#            elif self.parallel < -90.0:
-#                self.parallel = -180.0 - self.parallel
-#
-#            if self.meridian > 180.0:
-#                self.meridian = 360.0 - self.meridian
-#            elif self.meridian < -180.0:
-#                self.meridian = -360.0 - self.meridian
-
             self.parallel %= 180
             self.meridian %= 360
 
             self.coords.label.set_text("{0}".format(self.get_coordinates()))
 
     def get_coordinates(self):
-        parallel = np.abs(self.parallel)
-        meridian = np.abs(self.meridian)
+        parallel = self.parallel
+        meridian = self.meridian - 180
 
-        if self.parallel >= 0:
+        if parallel > 90.0:
+            parallel = 180.0 - parallel
+        elif parallel < -90.0:
+            parallel = -180.0 - parallel
+
+        if meridian > 180.0:
+            meridian = 360.0 - meridian
+        elif meridian < -180.0:
+            meridian = -360.0 - meridian
+
+        if parallel >= 0:
             NS = "N"
         else:
             NS = "S"
 
-        if self.meridian >= 0:
+        if meridian >= 0:
             EW = "E"
         else:
             EW = "W"
 
-        return "{0} {1}, {2} {3}".format(parallel, NS, meridian, EW)
+        return "{0} {1}, {2} {3}".format(np.abs(parallel), NS,
+                                         np.abs(meridian), EW)
 
     def get_graticule(self):
         try:
