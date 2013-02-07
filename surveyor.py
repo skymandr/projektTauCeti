@@ -9,8 +9,6 @@ from testgrids import make_testgrids as grids
 
 
 # TODO:
-#   - implement those
-#       * rectangular
 #   - documentation
 
 
@@ -24,7 +22,7 @@ class PlanetarySurveyor(object):
         self.fig = plt.figure(1)
         self.ax = plt.subplot(111)
         plt.clf()
-        plt.subplots_adjust(left=0.1, bottom=0.20)
+        plt.subplots_adjust(left=0.1, bottom=0.25)
 
         self.meridian = 90
         self.parallel = 90
@@ -141,9 +139,13 @@ class PlanetarySurveyor(object):
             ax = self.display.axes
             self.display.axes.cla()
             self.display = ax.imshow(self.hemisphere, cmap=plt.cm.gray,
-                                      extent=[-1.5, 1.5, -1.5, 1.5])
-            plt.axis([-1.5, 1.5, -1.5, 1.5])
-            pass
+                                     extent=[
+                                     self.meridian - 90, self.meridian + 90,
+                                     self.parallel - 90, self.parallel + 90])
+            plt.axis([self.meridian - 90, self.meridian + 90,
+                      self.parallel - 90, self.parallel + 90])
+
+        self.fix_coordinates()
 
         if self.meridians > 0 or self.parallels > 0:
             self.draw_graticules()
@@ -191,7 +193,7 @@ class PlanetarySurveyor(object):
                 if self.mode == "azimuthal":
                     self.meridian += self.step * np.round(event.xdata)
                 elif self.mode == "rectangular":
-                    self.parallel = np.round(event.ydata / 0.5) * 0.5
+                    self.parallel = 180 - np.round(event.ydata / 0.5) * 0.5
                     self.meridian = np.round(event.xdata / 0.5) * 0.5
 
                 self.update()
@@ -245,23 +247,35 @@ class PlanetarySurveyor(object):
 
     def draw_graticules(self):
         dLat, dLon = self.get_graticule()
+        ax = self.display.axes
 
         if self.meridians > 0:
             if self.mode == "azimuthal":
                 x_mer, z_mer = grids.get_meridians(self.meridian, dLon, 1,
                                                    1.5 / 1.1, self.projection)
-                self.display.axes.plot(x_mer, z_mer, ':k', label="meridians")
-                self.display.axes.axis('off')
+
+                ax.plot(x_mer, z_mer, ':k', label="meridians")
+                ax.axis('off')
+            elif self.mode == "rectangular":
+                mer_min = np.ceil((self.meridian - 90) / dLon) * dLon
+                mer_max = np.floor((self.meridian + 90) / dLon) * dLon
+
+                ax.set_xticks(np.arange(mer_min, mer_max + 1,  dLon))
+                ax.grid(True)
 
         if self.parallels > 0:
             if self.mode == "azimuthal":
                 x_par, z_par = grids.get_parallels(self.parallel, dLat, 1,
                                                    1.5 / 1.1, self.projection)
-                self.display.axes.plot(x_par, z_par, ':k', label="parallels")
-                self.display.axes.axis('off')
-            elif self.mode == "rectangular":
-                pass
 
+                ax.plot(x_par, z_par, ':k', label="parallels")
+                ax.axis('off')
+            elif self.mode == "rectangular":
+                par_min = np.ceil((self.parallel - 90) / dLat) * dLat
+                par_max = np.floor((self.parallel + 90) / dLat) * dLat
+
+                ax.set_yticks(np.arange(par_min, par_max + 1, dLat))
+                ax.grid(True)
 
 
 def main():

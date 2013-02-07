@@ -465,7 +465,6 @@ def get_rectangular_hemisphere(map_image, meridian=90.0, parallel=90.0,
         return np.r_[map_image, np.rot90(np.rot90(map_image[1:, :]))]
     else:
         map_image = np.r_[map_image, np.rot90(np.rot90(map_image[1:, :]))]
-        print map_image.shape
 
         min_meridian = (np.ceil(
                     map_image.shape[1] * ((meridian - 90.0)) / 360.0))\
@@ -480,9 +479,6 @@ def get_rectangular_hemisphere(map_image, meridian=90.0, parallel=90.0,
         max_parallel = (np.ceil(
                     map_image.shape[0] * ((parallel + 90.0)) / 360.0))\
                     .astype(np.int)
-
-        print max_parallel, min_parallel, max_meridian, min_meridian
-
 
         Y, X = np.mgrid[min_parallel: max_parallel, min_meridian: max_meridian]
 
@@ -503,7 +499,7 @@ def get_azimuthal_hemisphere(map_image, meridian=90.0, parallel=90.0, R=256,
         print "Azimuthal projection currently only handles standard parallel!"
         print "Will return something, but it makes no cartographic sense!"
 
-        map_image = get_rectangular_hemisphere(map_image, meridian, parallel)
+    map_image = get_rectangular_hemisphere(map_image, meridian, parallel)
 
     min_meridian = (np.ceil(
                 map_image.shape[1] * ((meridian - 90.0)) / 360.0))\
@@ -513,10 +509,10 @@ def get_azimuthal_hemisphere(map_image, meridian=90.0, parallel=90.0, R=256,
                 .astype(np.int)
 
     min_parallel = (np.ceil(
-                map_image.shape[0] * ((parallel - 90.0)) / 180.0))\
+                map_image.shape[0] * ((parallel - 90.0)) / 360.0))\
                 .astype(np.int)
     max_parallel = (np.ceil(
-                map_image.shape[0] * ((parallel + 90.0)) / 180.0))\
+                map_image.shape[0] * ((parallel + 90.0)) / 360.0))\
                 .astype(np.int)
 
     Y, X = np.mgrid[min_parallel: max_parallel, min_meridian: max_meridian]
