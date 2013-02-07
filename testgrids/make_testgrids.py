@@ -221,12 +221,12 @@ def get_parallels(meridian=90, graticule=22.5, resolution=1, R=1.0,
     max_mer = min_mer + 181
 
     Lat, Lon = np.mgrid[0: 181: resolution, 0: 181: graticule] * np.pi / 180
-    
+
     x_par, z_par = get_eqrec_coordinate_transform(Lat, Lon, R, azikind)
 
     return x_par.T, z_par.T
 
-    
+
 def get_meridians(meridian=90, graticule=22.5, resolution=1, R=1.0,
                   azikind="equidistant"):
     """
@@ -239,7 +239,7 @@ def get_meridians(meridian=90, graticule=22.5, resolution=1, R=1.0,
 
     Lat, Lon = np.mgrid[min_mer: 181: graticule,
                         0: 181: resolution] * np.pi / 180
-    
+
     x_mer, z_mer = get_eqrec_coordinate_transform(Lat, Lon, R, azikind)
 
     return x_mer, z_mer

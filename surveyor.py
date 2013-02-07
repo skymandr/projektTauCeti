@@ -232,7 +232,7 @@ class PlanetarySurveyor(object):
             x_par, z_par = grids.get_parallels(self.parallel, dLat, 1,
                                                1.5 / 1.1, self.projection)
             self.display.axes.plot(x_par, z_par, ':k', label="parallels")
-        
+
         self.display.axes.axis('off')
 
 
