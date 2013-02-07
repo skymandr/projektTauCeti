@@ -46,7 +46,6 @@ class PlanetarySurveyor(object):
         self.axes_meridians = plt.axes([0.15, 0.10, 0.60, 0.03])
         self.axes_parallels = plt.axes([0.15, 0.05, 0.60, 0.03])
 
-        self.coord_axes = plt.axes([0.84, 0.14, 0.15, 0.04])
         self.update_axes = plt.axes([0.84, 0.095, 0.15, 0.04])
         self.reset_axes = plt.axes([0.84, 0.05, 0.15, 0.04])
 
@@ -66,15 +65,14 @@ class PlanetarySurveyor(object):
         self.slider_parallels.on_changed(self.update)
 
         # Setup button(s):
-        self.coords = Button(self.coord_axes, '{0}'.format(
-                                              self.get_coordinates()))
-
         self.update_button = Button(self.update_axes, 'Update')
         self.update_button.on_clicked(self.update_display)
 
         self.button = Button(self.reset_axes, 'Reset')
         self.button.on_clicked(self.reset)
 
+        # Almost done:
+        self.update()
         plt.show()
 
     def load_image(self):
@@ -145,6 +143,8 @@ class PlanetarySurveyor(object):
             self.meridians = np.int(self.slider_meridians.val)
             self.parallels = np.int(self.slider_parallels.val)
 
+        self.fix_coordinates()
+
         plt.draw()
 
     def reset(self, event):
@@ -175,8 +175,6 @@ class PlanetarySurveyor(object):
 
                     self.update_display()
 
-                self.fix_coordinates()
-
                 self.update()
 
     def fix_coordinates(self):
@@ -190,7 +188,8 @@ class PlanetarySurveyor(object):
             elif self.meridian < -180.0:
                 self.meridian = -360.0 - self.meridian
 
-            self.coords.label.set_text("{0}".format(self.get_coordinates()))
+            self.hemisphere_axes.set_title("{0}: {1}".format(self.projection,
+                                                      self.get_coordinates()))
 
     def get_coordinates(self):
         parallel = np.abs(self.parallel)
