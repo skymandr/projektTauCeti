@@ -9,14 +9,8 @@ from testgrids import make_testgrids as grids
 
 
 # TODO:
-#   - add radio-buttons for:
-#       * orthographic
-#       * lambert
-#       * equidistant
-#       * stereographic
-#       * rectangular
-#       (the radio buttons should also set mode and parallel appropriately)
 #   - implement those
+#       * rectangular
 #   - documentation
 
 
@@ -49,12 +43,14 @@ class PlanetarySurveyor(object):
                              linewidth=1)
 
         # Setup axes:
-        self.axes_step = plt.axes([0.15, 0.15, 0.60, 0.03])
-        self.axes_meridians = plt.axes([0.15, 0.10, 0.60, 0.03])
-        self.axes_parallels = plt.axes([0.15, 0.05, 0.60, 0.03])
+        self.axes_step = plt.axes([0.13, 0.15, 0.60, 0.03])
+        self.axes_meridians = plt.axes([0.13, 0.10, 0.60, 0.03])
+        self.axes_parallels = plt.axes([0.13, 0.05, 0.60, 0.03])
 
-        self.update_axes = plt.axes([0.84, 0.095, 0.15, 0.04])
-        self.reset_axes = plt.axes([0.84, 0.05, 0.15, 0.04])
+        self.update_axes = plt.axes([0.79, 0.095, 0.08, 0.04])
+        self.reset_axes = plt.axes([0.79, 0.05, 0.08, 0.04])
+
+        self.radio_axes = plt.axes([0.88, 0.05, 0.11, 0.15])
 
         # Setup sliders:
         self.step = 22.5
@@ -78,6 +74,16 @@ class PlanetarySurveyor(object):
 
         self.reset_button = Button(self.reset_axes, 'Reset')
         self.reset_button.on_clicked(self.reset)
+
+        # Setup radio buttons:
+        self.radio = RadioButtons(self.radio_axes, ('ortho', 'eq.area',
+                                  'eq.dist', 'stereo', 'rect'), active=0)
+        self.radio.on_clicked(self.set_mode)
+        self.projections = {"ortho": ("orthographic", "azimuthal"),
+                            "eq.area": ("lambert", "azimuthal"),
+                            "eq.dist": ("equidistant", "azimuthal"),
+                            "stereo": ("stereographic", "azimuthal"),
+                            "rect": ("rectangular", "rectangular")}
 
         # Almost ready:
         self.update()
@@ -154,12 +160,23 @@ class PlanetarySurveyor(object):
 
         plt.draw()
 
+    def set_mode(self, val="ortho"):
+        self.projection = self.projections[val][0]
+        self.mode = self.projections[val][1]
+
+        if self.mode == "azimuthal":
+            self.parallel = 90
+
+        self.update_display()
+
     def reset(self, event):
         self.slider_step.reset()
         self.slider_meridians.reset()
         self.slider_parallels.reset()
         self.meridian = 90
         self.parallel = 90
+        self.update()
+        self.set_mode()
 
     def mouseclick(self, event):
         if event.inaxes == self.display.axes:
@@ -226,7 +243,6 @@ class PlanetarySurveyor(object):
             x_mer, z_mer = grids.get_meridians(self.meridian, dLon, 1,
                                                1.5 / 1.1, self.projection)
             self.display.axes.plot(x_mer, z_mer, ':k', label="meridians")
-            print x_mer.min(), x_mer.max(), x_mer.shape
 
         if self.parallels > 0:
             x_par, z_par = grids.get_parallels(self.parallel, dLat, 1,

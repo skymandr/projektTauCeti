@@ -388,7 +388,7 @@ def get_azi_coordinate_transform(X, Y, Z, S, azikind='equidistant'):
 
         x = np.cos(d)
         y = np.sin(d) * np.cos(f)
-        z = np.sin(d) * np.sin(f)
+        z = -np.sin(d) * np.sin(f)
 
         Lat  = (np.round(np.arccos(z / 1) * \
                          (S - 1) / np.pi))\
