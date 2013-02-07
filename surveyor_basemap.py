@@ -8,10 +8,6 @@ from mpl_toolkits.basemap import Basemap
 
 
 # TODO:
-#   - make radiobuttons for the following projections:
-#       * orthographic
-#       * azimuthal equidistant
-#       * equirectangular
 #   - documentation
 
 
@@ -42,12 +38,14 @@ class PlanetarySurveyor(object):
                              linewidth=1)
 
         # Setup axes:
-        self.axes_step = plt.axes([0.15, 0.15, 0.60, 0.03])
-        self.axes_meridians = plt.axes([0.15, 0.10, 0.60, 0.03])
-        self.axes_parallels = plt.axes([0.15, 0.05, 0.60, 0.03])
+        self.axes_step = plt.axes([0.13, 0.15, 0.60, 0.03])
+        self.axes_meridians = plt.axes([0.13, 0.10, 0.60, 0.03])
+        self.axes_parallels = plt.axes([0.13, 0.05, 0.60, 0.03])
 
-        self.update_axes = plt.axes([0.84, 0.095, 0.15, 0.04])
-        self.reset_axes = plt.axes([0.84, 0.05, 0.15, 0.04])
+        self.update_axes = plt.axes([0.79, 0.095, 0.08, 0.04])
+        self.reset_axes = plt.axes([0.79, 0.05, 0.08, 0.04])
+
+        self.radio_axes = plt.axes([0.88, 0.05, 0.11, 0.15])
 
         # Setup sliders:
         self.step = 22.5
@@ -70,6 +68,14 @@ class PlanetarySurveyor(object):
 
         self.button = Button(self.reset_axes, 'Reset')
         self.button.on_clicked(self.reset)
+
+        # Setup radio buttons:
+        self.radio = RadioButtons(self.radio_axes, ('ortho', 'eq.dist',
+                                                    'rect'), active=0)
+        self.radio.on_clicked(self.set_mode)
+        self.projections = {"ortho": ("orthographic", "ortho"),
+                            "eq.dist": ("equidistant", "aeqd"),
+                            "rect": ("rectangular", "cyl")}
 
         # Almost done:
         self.update()
@@ -130,6 +136,8 @@ class PlanetarySurveyor(object):
         self.hemisphere.drawmapboundary()
         self.draw_graticules()
 
+        print "Updated display"
+
         self.update()
 
     def update(self, val=0):
@@ -148,6 +156,11 @@ class PlanetarySurveyor(object):
         self.fix_coordinates()
 
         plt.draw()
+
+    def set_mode(self, val="ortho"):
+        self.projection = self.projections[val][0]
+
+        self.update_display()
 
     def reset(self, event):
         self.slider_step.reset()
