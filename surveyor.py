@@ -9,6 +9,8 @@ from testgrids import make_testgrids as grids
 
 
 # TODO:
+#   - update button
+#   - coordinates
 #   - grid
 #   - add radio-buttons for:
 #       * orthographic
@@ -18,7 +20,6 @@ from testgrids import make_testgrids as grids
 #       * rectangular
 #       (the radio buttons should also set mode and parallel appropriately)
 #   - implement those
-#   - file assignment on startup
 #   - documentation
 
 
@@ -26,11 +27,7 @@ class PlanetarySurveyor(object):
     def __init__(self, filename):
         self.filename = filename
 
-        map_image = plt.imread(filename)
-        while len(map_image.shape) > 2:
-            map_image = map_image.mean(-1)
-
-        self.map_image = map_image
+        self.load_image()
 
         # Setup display:
         self.fig = plt.figure(1)
@@ -86,13 +83,28 @@ class PlanetarySurveyor(object):
 
         plt.show()
 
+    def load_image(self):
+        try:
+            map_image = plt.imread(self.filename)
+        except IOError as e:
+            print "Could not load file {0} ({1})".format(
+                  self.filename, e.strerror)
+            print "Using default image..."
+            self.filename = "nowwhat.png"
+            map_image = plt.imread(self.filename)
+
+        while len(map_image.shape) > 2:
+            map_image = map_image.mean(-1)
+
+        self.map_image = map_image
+
     def setup_display(self):
         self.R = 180
         self.padding = self.R / 10
-        print self.padding
+
         if self.mode == 'azimuthal':
             self.hemisphere = p.get_azimuthal_hemisphere(
-                                self.map_image, self.meridian, 0,
+                                self.map_image, self.meridian, 90,
                                 self.R, self.projection, 0, self.padding)
             self.display = plt.imshow(self.hemisphere, cmap=plt.cm.gray,
                                       extent=[-1.5, 1.5, -1.5, 1.5])
@@ -105,7 +117,7 @@ class PlanetarySurveyor(object):
     def update_display(self):
         if self.mode == 'azimuthal':
             self.hemisphere = p.get_azimuthal_hemisphere(
-                                self.map_image, self.meridian, 0,
+                                self.map_image, self.meridian, 90,
                                 self.R, self.projection, 0, self.padding)
             ax = self.display.axes
             self.display = ax.imshow(self.hemisphere, cmap=plt.cm.gray,
@@ -156,15 +168,18 @@ class PlanetarySurveyor(object):
                 self.update_display()
 
     def fix_coordinates(self):
-            if self.parallel > 90.0:
-                self.parallel = 180.0 - self.parallel
-            elif self.parallel < -90.0:
-                self.parallel = -180.0 - self.parallel
+#            if self.parallel > 90.0:
+#                self.parallel = 180.0 - self.parallel
+#            elif self.parallel < -90.0:
+#                self.parallel = -180.0 - self.parallel
+#
+#            if self.meridian > 180.0:
+#                self.meridian = 360.0 - self.meridian
+#            elif self.meridian < -180.0:
+#                self.meridian = -360.0 - self.meridian
 
-            if self.meridian > 180.0:
-                self.meridian = 360.0 - self.meridian
-            elif self.meridian < -180.0:
-                self.meridian = -360.0 - self.meridian
+            self.parallel %= 180
+            self.meridian %= 360
 
             self.coords.label.set_text("{0}".format(self.get_coordinates()))
 
@@ -198,8 +213,11 @@ class PlanetarySurveyor(object):
 
 
 def main():
-    filename = 'new/anarres_small_eq_2_grey.png'
-    print filename
+    try:
+        filename = sys.argv[1]
+    except IndexError:
+        filename = ""
+
     Surveyor = PlanetarySurveyor(filename)
 
 

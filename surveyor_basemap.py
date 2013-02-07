@@ -8,17 +8,18 @@ from mpl_toolkits.basemap import Basemap
 
 
 # TODO:
+#   - update button
 #   - make radiobuttons for the following projections:
 #       * orthographic
 #       * azimuthal equidistant
 #       * equirectangular
-#   - file assignment on startup
 #   - documentation
 
 
 class PlanetarySurveyor(object):
     def __init__(self, filename):
         self.filename = filename
+        self.load_image()
 
         # Setup display:
         self.fig = plt.figure(1)
@@ -71,6 +72,15 @@ class PlanetarySurveyor(object):
                                               self.get_coordinates()))
 
         plt.show()
+
+    def load_image(self):
+        try:
+            map_image = plt.imread(self.filename)
+        except IOError as e:
+            print "Could not load file {0} ({1})".format(
+                  self.filename, e.strerror)
+            print "Using default image..."
+            self.filename = "nowwhat.png"
 
     def setup_display(self):
         self.hemisphere_axes = plt.gca()
@@ -226,8 +236,11 @@ class PlanetarySurveyor(object):
 
 
 def main():
-    filename = 'new/anarres_small_eq_2.png'
-    print filename
+    try:
+        filename = sys.argv[1]
+    except IndexError:
+        filename = ""
+
     Surveyor = PlanetarySurveyor(filename)
 
 
