@@ -90,7 +90,7 @@ class PlanetarySurveyor(object):
             print "Could not load file {0} ({1})".format(
                   self.filename, e.strerror)
             print "Using default image..."
-            self.filename = "nowwhat.png"
+            self.filename = "templates/nowwhat.png"
             map_image = plt.imread(self.filename)
 
         while len(map_image.shape) > 2:
