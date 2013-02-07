@@ -135,7 +135,14 @@ class PlanetarySurveyor(object):
             plt.axis([-1.5, 1.5, -1.5, 1.5])
             plt.axis('off')
         elif self.mode == 'rectangular':
-            plt.axis([-180, 180, -90, 90])
+            self.hemisphere = p.get_rectangular_hemisphere(
+                                self.map_image, self.meridian, self.parallel,
+                                False)
+            ax = self.display.axes
+            self.display.axes.cla()
+            self.display = ax.imshow(self.hemisphere, cmap=plt.cm.gray,
+                                      extent=[-1.5, 1.5, -1.5, 1.5])
+            plt.axis([-1.5, 1.5, -1.5, 1.5])
             pass
 
         if self.meridians > 0 or self.parallels > 0:
@@ -240,16 +247,21 @@ class PlanetarySurveyor(object):
         dLat, dLon = self.get_graticule()
 
         if self.meridians > 0:
-            x_mer, z_mer = grids.get_meridians(self.meridian, dLon, 1,
-                                               1.5 / 1.1, self.projection)
-            self.display.axes.plot(x_mer, z_mer, ':k', label="meridians")
+            if self.mode == "azimuthal":
+                x_mer, z_mer = grids.get_meridians(self.meridian, dLon, 1,
+                                                   1.5 / 1.1, self.projection)
+                self.display.axes.plot(x_mer, z_mer, ':k', label="meridians")
+                self.display.axes.axis('off')
 
         if self.parallels > 0:
-            x_par, z_par = grids.get_parallels(self.parallel, dLat, 1,
-                                               1.5 / 1.1, self.projection)
-            self.display.axes.plot(x_par, z_par, ':k', label="parallels")
+            if self.mode == "azimuthal":
+                x_par, z_par = grids.get_parallels(self.parallel, dLat, 1,
+                                                   1.5 / 1.1, self.projection)
+                self.display.axes.plot(x_par, z_par, ':k', label="parallels")
+                self.display.axes.axis('off')
+            elif self.mode == "rectangular":
+                pass
 
-        self.display.axes.axis('off')
 
 
 def main():
