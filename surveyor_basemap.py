@@ -1,4 +1,57 @@
 #! /usr/bin/env python
+"""
+    surveyor_basemap.py
+    - a reimplementation of surveyor.py, using the BaseMap package
+    instead of projekt_anarres.py for drawing the projections.
+
+    (C) 2013 Andreas Skyman (skymandr@fripost.org)
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see [0].
+
+Usage:
+
+    $ ./surveyor_basemap.py <rectangular map image>
+
+Thie program lets you survey a map using some of the projections implemented
+in projekt_anarres.py, but using BaseMap to calculate and draw the map. This
+makes it more versetile than surveyor.py, of which it is a reimplementation,
+but also slower. An aditional benefit is that this version works as a
+standalone program, while surveyor.py requires the funtionality from
+projekt_anarres.py and testgrids.  The following projections are available:
+
+    - azimuthal orthographic
+    - azimuthal equidistant
+    - equirectangular
+
+The map data is taken from an image file assumed by the program to contain
+simple rectangular projection data. The program works best with png-format.
+
+The views can be navigated along any parallel or meridian.
+
+To update redraw meridians and parallels, press "Update". To reset the view,
+press "Reset".
+
+For more information on the different projections and options, please see
+the documentation for projekt_anarres.py!
+
+
+------
+[0]:  http://www.gnu.org/licenses/gpl-3.0.html
+"""
+
+
+#Initial imports:
 import os
 import sys
 import numpy as np
@@ -7,12 +60,18 @@ from matplotlib.widgets import Slider, Button, RadioButtons, Cursor
 from mpl_toolkits.basemap import Basemap
 
 
-# TODO:
-#   - documentation
-
-
 class PlanetarySurveyor(object):
-    def __init__(self, filename):
+    """
+    The PlanetarySurveyor creates a Matplotlib "widget" letting the user
+    navigate map data loaded from an image file.
+    """
+
+    def __init__(self, filename="templates/nowwhat.png"):
+        """
+        Initialized with filename of image file containing the equirectangular
+        map data.
+        """
+
         self.filename = filename
         self.load_image()
 
@@ -82,6 +141,11 @@ class PlanetarySurveyor(object):
         plt.show()
 
     def load_image(self):
+        """
+        Checks if the image file specified exists and is an image file. If this
+        fails, the default map is loaded.
+        """
+
         try:
             map_image = plt.imread(self.filename)
         except IOError as e:
@@ -91,6 +155,10 @@ class PlanetarySurveyor(object):
             self.filename = "templates/nowwhat.png"
 
     def setup_display(self):
+        """
+        Setup parameters and map display.
+        """
+
         self.hemisphere_axes = plt.gca()
         self.R = 10000 * 360.0 / (2 * np.pi)
         self.width = 180 * 10000
@@ -116,6 +184,10 @@ class PlanetarySurveyor(object):
         self.draw_graticules()
 
     def update_display(self):
+        """
+        Update map display.
+        """
+
         if self.projection == 'orthographic':
             self.hemisphere = Basemap(projection="ortho", lon_0=self.meridian,
                               lat_0=self.parallel, resolution='c',
@@ -136,11 +208,13 @@ class PlanetarySurveyor(object):
         self.hemisphere.drawmapboundary()
         self.draw_graticules()
 
-        print "Updated display"
-
         self.update()
 
     def update(self, val=0):
+        """
+        Update internal parameters from sliders, update coordiantes and draw.
+        """
+
         if self.step != self.slider_step.val:
             self.step = np.round(self.slider_step.val / 0.5) * 0.5
             self.slider_step.set_val(self.step)
@@ -158,11 +232,19 @@ class PlanetarySurveyor(object):
         plt.draw()
 
     def set_mode(self, val="ortho"):
+        """
+        Set projection mode.
+        """
+
         self.projection = self.projections[val][0]
 
         self.update_display()
 
     def reset(self, event):
+        """
+        Reset widget
+        """
+
         self.slider_step.reset()
         self.slider_meridians.reset()
         self.slider_parallels.reset()
@@ -171,6 +253,10 @@ class PlanetarySurveyor(object):
         self.update()
 
     def mouseclick(self, event):
+        """
+        Handle mouse navigation of map display for the different projections.
+        """
+
         if event.inaxes == self.hemisphere_axes:
             if event.button == 1:
                 if self.projection == "rectangular":
@@ -193,20 +279,28 @@ class PlanetarySurveyor(object):
                 self.update()
 
     def fix_coordinates(self):
-            if self.parallel > 90.0:
-                self.parallel = 180.0 - self.parallel
-            elif self.parallel < -90.0:
-                self.parallel = -180.0 - self.parallel
+        """
+        Fix coordinates so they comply to standard representation for maps.
+        """
 
-            if self.meridian > 180.0:
-                self.meridian = 360.0 - self.meridian
-            elif self.meridian < -180.0:
-                self.meridian = -360.0 - self.meridian
+        if self.parallel > 90.0:
+            self.parallel = 180.0 - self.parallel
+        elif self.parallel < -90.0:
+            self.parallel = -180.0 - self.parallel
 
-            self.hemisphere_axes.set_title("{0}: {1}".format(self.projection,
-                                                      self.get_coordinates()))
+        if self.meridian > 180.0:
+            self.meridian = 360.0 - self.meridian
+        elif self.meridian < -180.0:
+            self.meridian = -360.0 - self.meridian
+
+        self.hemisphere_axes.set_title("{0}: {1}".format(self.projection,
+                                                  self.get_coordinates()))
 
     def get_coordinates(self):
+        """
+        Return string representation of coordinates in N-S/E-W standard.
+        """
+
         parallel = np.abs(self.parallel)
         meridian = np.abs(self.meridian)
 
@@ -223,15 +317,28 @@ class PlanetarySurveyor(object):
         return "{0} {1}, {2} {3}".format(parallel, NS, meridian, EW)
 
     def get_graticule(self):
-        try:
-            dLat = np.round(180.0 / self.parallels).astype(np.int)
-            dLon = np.round(360.0 / self.meridians).astype(np.int)
+        """
+        Return resolution of the current graticule (distances between parallel
+        and meridian lines).
+        """
 
-            return dLat, dLon
+        try:
+            dLat = 180.0 / self.parallels
         except ZeroDivisionError:
-            return None, None
+            dLat = None
+
+        try:
+            dLon = 360.0 / self.meridians
+        except ZeroDivisionError:
+            dLon = 0
+
+        return dLat, dLon
 
     def draw_graticules(self):
+        """
+        Draw parallel and meridian lines.
+        """
+
         parallel_step = 180.0 / self.parallels
         meridian_step = 360.0 / self.meridians
 
@@ -251,6 +358,10 @@ class PlanetarySurveyor(object):
 
 
 def main():
+    """
+    Parse commandline arguments and start widget.
+    """
+
     try:
         filename = sys.argv[1]
     except IndexError:
