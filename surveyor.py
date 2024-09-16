@@ -4,7 +4,7 @@
     - a python program, which shows an example use of projekt_anarres.py
     by letting the user survey a planet using different projections.
 
-    (C) 2013 Andreas Skyman (skymandr@fripost.org)
+    (C) 2013 Ida-Sofia Skyman (skymandr@fripost.org)
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by

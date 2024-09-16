@@ -4,7 +4,7 @@
     - a reimplementation of surveyor.py, using the BaseMap package
     instead of projekt_anarres.py for drawing the projections.
 
-    (C) 2013 Andreas Skyman (skymandr@fripost.org)
+    (C) 2013 Ida-Sofia Skyman (skymandr@fripost.org)
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by

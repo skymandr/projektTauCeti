@@ -3,7 +3,7 @@
     - a python module for testing and showcasing the projections
     implemented in projekt_anarres.py
 
-    (C) 2012 Andreas Skyman (skymandr@fripost.org)
+    (C) 2012 Ida-Sofia Skyman (skymandr@fripost.org)
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
